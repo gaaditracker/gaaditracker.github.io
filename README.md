@@ -89,20 +89,17 @@ Download the official badges from <https://play.google.com/intl/en_us/badges/> a
 
 Every push to `main` builds the site and publishes it to GitHub Pages (`.github/workflows/deploy.yml`). In the repo, **Settings → Pages → Source** must be **GitHub Actions**. Don't use "Deploy from a branch": that runs Jekyll on the source files and fails.
 
-The site's address is set in `src/data/site-url.mjs`:
+The site is served at **https://gaaditracker.in** (custom domain set in **Settings → Pages → Custom domain**). The address is set in `src/data/site-url.mjs`:
 
 ```js
-export const SITE_ORIGIN = 'https://hangoutech.com';
-export const BASE_PATH = '/gaaditracker.github.io';   // the sub-folder GitHub Pages serves it from
+export const SITE_ORIGIN = 'https://gaaditracker.in';
+export const BASE_PATH = '';   // '/gaaditracker.github.io' if served from the GitHub sub-folder instead
 ```
 
 Every link, canonical URL, sitemap entry, share image, `robots.txt` and `llms.txt` follows these two lines. In `.astro` files, write internal links with the `url()` helper from `src/data/site.ts` (`href={url('/pricing')}`); in Markdown use relative links (`../pricing/`).
 
-Locally the dev server runs at http://localhost:4321/gaaditracker.github.io/.
+Locally the dev server runs at http://localhost:4321/.
 
-### Moving to your own domain (e.g. gaaditracker.in)
+### DNS for gaaditracker.in
 
-1. In `src/data/site-url.mjs` set `SITE_ORIGIN = 'https://gaaditracker.in'` and `BASE_PATH = ''`.
-2. Add `public/CNAME` containing `gaaditracker.in`.
-3. At your domain registrar, point the domain at GitHub Pages (A records to 185.199.108.153, .109.153, .110.153, .111.153, or a CNAME for `www` to `hangoutech.github.io`).
-4. In the repo, **Settings → Pages → Custom domain**: enter the domain and tick **Enforce HTTPS** once it's available.
+At the domain registrar, the apex `gaaditracker.in` needs **only** GitHub's four A records: 185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153 (remove any parking or forwarding records), and `www` a CNAME to `hangoutech.github.io`. Once GitHub has issued the certificate, tick **Enforce HTTPS** in Settings → Pages.
