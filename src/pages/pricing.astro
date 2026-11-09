@@ -33,8 +33,44 @@ const phone = site.contactPhone;
     </div>
   </div>
 
-  <!-- 2. Bill calculator -->
-  <section class="wrap" aria-labelledby="calc-h">
+  <!-- 2. Plans -->
+  <section class="wrap" aria-labelledby="plans-h">
+    <h2 id="plans-h" class="max-w-2xl text-[2rem] sm:text-[2.75rem]">Three plans. You only move up when you add vehicles.</h2>
+    <p class="mt-4"><a class="link font-semibold" href="#calculator">Work out your exact bill <span class="arr" aria-hidden="true">↓</span></a></p>
+    <div class="plans mt-12 grid gap-5 md:grid-cols-3 md:items-stretch md:gap-0">
+      {plans.map((p) => (
+        <article class:list={['plan', `plan-${p.id}`, p.id === 'fleet' && 'on-dark']} aria-labelledby={`plan-${p.id}-h`}>
+          {p.id === 'fleet' && <p class="pop">Most popular</p>}
+          <h3 id={`plan-${p.id}-h`} class="!font-sans text-[1.25rem] !font-bold !tracking-normal">{p.name}</h3>
+          <p class="plan-for mt-0.5 text-[0.9375rem]">{p.vehicles}</p>
+          <p class="mt-6 flex flex-wrap items-baseline gap-x-2">
+            <span class="num text-[2.75rem] font-semibold leading-none tracking-tight">{p.price}</span>
+            {p.unit && <span class="plan-for text-[0.9375rem] font-medium">{p.unit}</span>}
+          </p>
+          <p class="plan-line mt-3 text-[0.9375rem]">{p.line}</p>
+          {p.id === 'fleet' && <p class="mt-3 text-[0.8125rem] font-semibold text-[#ffb37a]">Launch price · locked for early customers</p>}
+          <a href={url(p.cta.href)} class:list={['btn mt-7 w-full', p.id === 'fleet' ? 'btn-primary' : 'btn-ghost']}>{p.cta.label}</a>
+          <div class="mt-7 border-t pt-6 plan-rule">
+            {p.lead && <p class="text-[0.9375rem] font-semibold">{p.lead}</p>}
+            <ul class="mt-3 grid gap-2.5 text-[0.9375rem]">
+              {p.items.map((i) => (
+                <li class="flex gap-2.5"><svg class="plan-tick mt-1 shrink-0" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 7.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>{i}</li>
+              ))}
+            </ul>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <ul class="stagger mt-10 grid gap-x-8 gap-y-5 border-t border-line pt-8 sm:grid-cols-3">
+      <li><p class="font-semibold">{pricing.trialDays}-day free trial</p><p class="mt-1 text-[0.9375rem] text-muted">Every new fleet gets all Fleet features free for 30 days. No card needed.</p></li>
+      <li><p class="font-semibold">Drivers are always free</p><p class="mt-1 text-[0.9375rem] text-muted">No charge per driver or per login. A day and a night driver on one cab cost nothing extra.</p></li>
+      <li><p class="font-semibold">Sold a vehicle? It’s free</p><p class="mt-1 text-[0.9375rem] text-muted">Set it to Disabled. It leaves your bill and stays in your reports.</p></li>
+    </ul>
+  </section>
+
+  <!-- 3. Bill calculator -->
+  <section id="calculator" class="wrap scroll-mt-20 pt-20 md:pt-28" aria-labelledby="calc-h">
     <div class="pc rounded-[2rem] bg-surface p-5 sm:p-8 md:p-10">
       <div class="flex flex-wrap items-end justify-between gap-4">
         <h2 id="calc-h" class="text-[1.5rem] sm:text-[1.875rem]">What will I pay?</h2>
@@ -109,41 +145,6 @@ const phone = site.contactPhone;
 
       <p class="mt-6 text-[0.875rem] text-muted">Prices in Indian rupees. GST: <span class="ph-text">{gstText}</span>. Only Active and Inactive vehicles count. Disabled (sold or retired) vehicles are free and stay in your reports.</p>
     </div>
-  </section>
-
-  <!-- 3. Plans -->
-  <section class="wrap pt-20 md:pt-28" aria-labelledby="plans-h">
-    <h2 id="plans-h" class="max-w-2xl text-[2rem] sm:text-[2.75rem]">Three plans. You only move up when you add vehicles.</h2>
-    <div class="plans mt-12 grid gap-5 md:grid-cols-3 md:items-stretch md:gap-0">
-      {plans.map((p) => (
-        <article class:list={['plan', `plan-${p.id}`, p.id === 'fleet' && 'on-dark']} aria-labelledby={`plan-${p.id}-h`}>
-          {p.id === 'fleet' && <p class="pop">Most popular</p>}
-          <h3 id={`plan-${p.id}-h`} class="!font-sans text-[1.25rem] !font-bold !tracking-normal">{p.name}</h3>
-          <p class="plan-for mt-0.5 text-[0.9375rem]">{p.vehicles}</p>
-          <p class="mt-6 flex flex-wrap items-baseline gap-x-2">
-            <span class="num text-[2.75rem] font-semibold leading-none tracking-tight">{p.price}</span>
-            {p.unit && <span class="plan-for text-[0.9375rem] font-medium">{p.unit}</span>}
-          </p>
-          <p class="plan-line mt-3 text-[0.9375rem]">{p.line}</p>
-          {p.id === 'fleet' && <p class="mt-3 text-[0.8125rem] font-semibold text-[#ffb37a]">Launch price · locked for early customers</p>}
-          <a href={url(p.cta.href)} class:list={['btn mt-7 w-full', p.id === 'fleet' ? 'btn-primary' : 'btn-ghost']}>{p.cta.label}</a>
-          <div class="mt-7 border-t pt-6 plan-rule">
-            {p.lead && <p class="text-[0.9375rem] font-semibold">{p.lead}</p>}
-            <ul class="mt-3 grid gap-2.5 text-[0.9375rem]">
-              {p.items.map((i) => (
-                <li class="flex gap-2.5"><svg class="plan-tick mt-1 shrink-0" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 7.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>{i}</li>
-              ))}
-            </ul>
-          </div>
-        </article>
-      ))}
-    </div>
-
-    <ul class="stagger mt-10 grid gap-x-8 gap-y-5 border-t border-line pt-8 sm:grid-cols-3">
-      <li><p class="font-semibold">{pricing.trialDays}-day free trial</p><p class="mt-1 text-[0.9375rem] text-muted">Every new fleet gets all Fleet features free for 30 days. No card needed.</p></li>
-      <li><p class="font-semibold">Drivers are always free</p><p class="mt-1 text-[0.9375rem] text-muted">No charge per driver or per login. A day and a night driver on one cab cost nothing extra.</p></li>
-      <li><p class="font-semibold">Sold a vehicle? It’s free</p><p class="mt-1 text-[0.9375rem] text-muted">Set it to Disabled. It leaves your bill and stays in your reports.</p></li>
-    </ul>
   </section>
 
   <!-- 4. Is it worth ₹49? -->
