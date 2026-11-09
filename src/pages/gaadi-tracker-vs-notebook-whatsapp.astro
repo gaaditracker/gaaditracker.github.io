@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import MessyReality from '../components/MessyReality.astro';
+import Download from '../components/Download.astro';
+import { breadcrumbs } from '../data/schema';
+const path = '/gaadi-tracker-vs-notebook-whatsapp';
+
+const rows: [string, string, string][] = [
+  ['Cost', 'Free. A ₹40 notebook and the WhatsApp you already have.', 'Paid app (see pricing). Needs an Android phone for you and each driver.'],
+  ['Getting started', 'Nothing to learn.', 'You add vehicles and drivers once and create driver logins. Drivers learn to start and end a shift.'],
+  ['Km driven', 'Whatever the driver tells you, if you remember to ask.', 'Odometer in and out every shift, checked against the last reading.'],
+  ['Earnings', 'A round number on a call or a message at night.', 'Entered by platform, with the time, the moment the driver adds it.'],
+  ['Fuel', 'A bill photo, sometimes. Hard to check against km.', 'Each fill logged with amount and quantity. Fuel average for lorries, trucks, vans and buses.'],
+  ['Driver pay', 'Worked out by hand at month end, often argued over.', 'Driver cost worked out on every shift from the rule you set.'],
+  ['Advances and payments', 'Remembered, or written in two different notebooks.', 'Recorded on both sides. One balance both of you see.'],
+  ['Edits after the fact', 'Anyone can overwrite a page or delete a message.', 'Driver edits need your approval. Approved shifts are locked.'],
+  ['Road tax and service', 'Calendar note, if anyone made one.', 'Reminders by quarter, km or date.'],
+  ['Reports', 'Add up the pages yourself.', 'By vehicle, driver, platform or date range. CSV or PDF export.'],
+  ['No signal', 'Works anywhere, it’s paper.', 'Driver app works offline and syncs later.'],
+  ['Phone lost or broken', 'Notebook lost: records gone.', 'Data is synced to the account, so a new phone signs in and carries on.'],
+];
+---
+<Base title="Gaadi Tracker vs Notebook and WhatsApp | Gaadi Tracker"
+  description="A fair comparison of running your fleet on a notebook and WhatsApp versus Gaadi Tracker: km, fuel, driver pay, advances, reminders and reports."
+  path={path} schema={[breadcrumbs([{ name: 'Home', path: '/' }, { name: 'vs notebook and WhatsApp', path }])]}>
+  <PageIntro crumb="vs notebook and WhatsApp" path={path} eyebrow="Comparison" title="Gaadi Tracker vs a notebook and WhatsApp"
+    answer="Most Indian fleet owners run the hisab on a notebook, WhatsApp messages and phone calls. That works for one vehicle you drive yourself. Once other people drive your vehicles, the gaps show up in km, fuel and cash settlement. Here is an honest side-by-side." updated="2026-11-09" />
+
+  <section class="wrap" aria-labelledby="cmp-h">
+    <h2 id="cmp-h" class="sr-only">Comparison table</h2>
+    <div class="overflow-x-auto">
+      <table class="data-table min-w-[44rem]">
+        <thead><tr><th scope="col" class="w-[16%]">What</th><th scope="col">Notebook and WhatsApp</th><th scope="col">Gaadi Tracker</th></tr></thead>
+        <tbody>
+          {rows.map(([a, b, c]) => <tr><th scope="row" class="font-semibold">{a}</th><td class="text-muted">{b}</td><td>{c}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="wrap grid gap-10 py-16 md:grid-cols-[1fr_1.3fr] md:gap-16 md:py-24" aria-labelledby="when-h">
+    <div>
+      <h2 id="when-h" class="text-[1.75rem] sm:text-[2.25rem]">When the notebook is enough</h2>
+      <p class="mt-4 text-muted">If you own one vehicle and drive it yourself, a notebook is fine. You know the km, you filled the fuel, and there’s nobody to settle with.</p>
+      <h2 class="mt-10 text-[1.75rem] sm:text-[2.25rem]">When it stops working</h2>
+      <p class="mt-4 text-muted">The day someone else drives. Now the km, the fuel and the cash come to you second-hand, and the notebook only holds what you were told. That is where Gaadi Tracker starts.</p>
+      <p class="mt-6"><a class="link" href="/features">See every feature</a></p>
+    </div>
+    <MessyReality />
+  </section>
+
+  <Download campaign="comparison" />
+</Base>

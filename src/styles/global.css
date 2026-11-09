@@ -1,0 +1,459 @@
+@import 'tailwindcss';
+
+/* Google Sans (OFL, Google Fonts), self-hosted. Only the latin, latin-ext and
+   devanagari subsets are loaded; each declares a unicode-range, so a browser
+   downloads only what a page uses. The ₹ sign comes from the devanagari file.
+   All faces use font-display: swap. */
+@import '@fontsource/google-sans/latin-400.css';
+@import '@fontsource/google-sans/latin-ext-400.css';
+@import '@fontsource/google-sans/devanagari-400.css';
+@import '@fontsource/google-sans/latin-500.css';
+@import '@fontsource/google-sans/latin-ext-500.css';
+@import '@fontsource/google-sans/devanagari-500.css';
+@import '@fontsource/google-sans/latin-600.css';
+@import '@fontsource/google-sans/latin-ext-600.css';
+@import '@fontsource/google-sans/devanagari-600.css';
+@import '@fontsource/google-sans/latin-700.css';
+@import '@fontsource/google-sans/latin-ext-700.css';
+@import '@fontsource/google-sans/devanagari-700.css';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ---------- colour tokens ---------- */
+:root {
+  --bg: #ffffff;
+  --surface: #f5f5f7;
+  --surface-2: #e8e8ed;
+  --line: #d2d2d7;
+  --ink: #1d1d1f;
+  --ink-muted: #6e6e73;
+  --orange: #f76707;
+  --orange-deep: #e8590c;
+  --orange-text: #c2410c;
+  --peach: #ffd8a8;
+  --peach-soft: #fff1e0;
+  --indigo: #4f46e5;
+  --indigo-text: #4338ca;
+  --indigo-soft: #ecebfd;
+  --ok: #15803d;
+  --bad: #b91c1c;
+  --on-orange: #ffffff;
+  --phone: #1d1d1f;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #000000;
+    --surface: #1c1c1e;
+    --surface-2: #2c2c2e;
+    --line: #38383a;
+    --ink: #f5f5f7;
+    --ink-muted: #a1a1a6;
+    --orange-text: #ff8f45;
+    --peach: #5a3517;
+    --peach-soft: #2a1d13;
+    --indigo-text: #a5a0fa;
+    --indigo: #8e88f7;
+    --indigo-soft: #23203f;
+    --ok: #4ade80;
+    --bad: #f87171;
+    --phone: #000000;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #000000;
+  --surface: #1c1c1e;
+  --surface-2: #2c2c2e;
+  --line: #38383a;
+  --ink: #f5f5f7;
+  --ink-muted: #a1a1a6;
+  --orange-text: #ff8f45;
+  --peach: #5a3517;
+  --peach-soft: #2a1d13;
+  --indigo-text: #a5a0fa;
+  --indigo: #8e88f7;
+  --indigo-soft: #23203f;
+  --ok: #4ade80;
+  --bad: #f87171;
+  --phone: #000000;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--ink-muted);
+  --color-orange: var(--orange);
+  --color-orange-deep: var(--orange-deep);
+  --color-orange-text: var(--orange-text);
+  --color-peach: var(--peach);
+  --color-peach-soft: var(--peach-soft);
+  --color-indigo: var(--indigo);
+  --color-indigo-text: var(--indigo-text);
+  --color-indigo-soft: var(--indigo-soft);
+  --color-ok: var(--ok);
+  --color-bad: var(--bad);
+  --font-display: 'Google Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Google Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ---------- base ---------- */
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    background: var(--bg);
+    color: var(--ink);
+    text-rendering: optimizeLegibility;
+  }
+  :lang(hi) body,
+  body:lang(hi) {
+    line-height: 1.8;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+  h3 {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+  /* Devanagari needs room above and below: no tight leading, no negative tracking. */
+  :lang(hi) :is(h1, h2, h3) {
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  a {
+    color: inherit;
+  }
+  :focus-visible {
+    outline: 3px solid var(--orange);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  ::selection {
+    background: var(--peach);
+    color: var(--ink);
+  }
+}
+
+/* ---------- components ---------- */
+@layer components {
+  .wrap {
+    width: 100%;
+    max-width: 76rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .wrap {
+      padding-inline: 2rem;
+    }
+  }
+
+  .num {
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-feature-settings: 'tnum' 1, 'lnum' 1;
+  }
+
+  .eyebrow {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  :lang(hi) .eyebrow {
+    letter-spacing: 0;
+    text-transform: none;
+    font-size: 0.9375rem;
+  }
+
+  .lede {
+    font-size: 1.1875rem;
+    line-height: 1.6;
+    color: var(--ink-muted);
+    max-width: 38rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 48px;
+    padding: 0.75rem 1.25rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.2;
+    text-decoration: none;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .btn-primary {
+    background: var(--orange);
+    color: var(--on-orange);
+  }
+  .btn-primary:hover {
+    background: #ff7a1f;
+    transform: translateY(-1px);
+  }
+  .btn {
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+  }
+  .btn-ghost {
+    border: 1.5px solid var(--line);
+    color: var(--ink);
+  }
+  .btn-ghost:hover {
+    border-color: var(--ink-muted);
+  }
+
+  .link {
+    color: var(--orange-text);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3px;
+  }
+  .link:hover {
+    text-decoration-thickness: 2.5px;
+  }
+
+  .rule-top {
+    border-top: 1px solid var(--line);
+  }
+
+  /* Placeholder outline: visible while site.showPlaceholders is true. */
+  .ph {
+    outline: 2px dashed var(--orange);
+    outline-offset: 4px;
+    position: relative;
+  }
+  .ph-label {
+    position: absolute;
+    z-index: 5;
+    top: -0.75rem;
+    left: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    background: var(--orange);
+    color: var(--on-orange);
+    font: 600 0.6875rem/1.4 var(--font-sans);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  /* Table used for pay models, comparisons and quarter dates. */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9875rem;
+  }
+  .data-table th,
+  .data-table td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.875rem 1rem 0.875rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .data-table thead th {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ink-muted);
+    border-bottom: 1.5px solid var(--ink);
+  }
+  .data-table td.n,
+  .data-table th.n {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Long-form text: blog posts, policies. */
+  .prose {
+    max-width: 42rem;
+    font-size: 1.0625rem;
+  }
+  .prose > * + * {
+    margin-top: 1.1em;
+  }
+  .prose h2 {
+    font-size: 1.75rem;
+    margin-top: 2.2em;
+  }
+  .prose h3 {
+    font-size: 1.25rem;
+    margin-top: 1.8em;
+  }
+  .prose ul,
+  .prose ol {
+    padding-left: 1.25rem;
+  }
+  .prose ul {
+    list-style: disc;
+  }
+  .prose ol {
+    list-style: decimal;
+  }
+  .prose li + li {
+    margin-top: 0.4em;
+  }
+  .prose li::marker {
+    color: var(--orange-text);
+  }
+  .prose a {
+    color: var(--orange-text);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose strong {
+    font-weight: 700;
+  }
+  .prose table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9625rem;
+    font-variant-numeric: tabular-nums;
+    display: block;
+    overflow-x: auto;
+  }
+  .prose th,
+  .prose td {
+    text-align: left;
+    padding: 0.625rem 1rem 0.625rem 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .prose thead th {
+    border-bottom: 1.5px solid var(--ink);
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+  .prose blockquote {
+    border-left: 3px solid var(--orange);
+    padding-left: 1rem;
+    color: var(--ink-muted);
+  }
+  .prose code {
+    font-size: 0.9em;
+    background: var(--surface);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+}
+
+:root {
+  /* Premium deep panel colour: hero, owner cards, offline demo, download band. Same in both themes. */
+  --deep: #0b1830;
+  --deep-2: #132544;
+  --deep-3: #1d3358;
+  --deep-muted: #9fb0cb;
+}
+
+/* Labels and links on always-dark panels (hero, download band). */
+.on-dark .text-indigo-text { color: #b9b4ff; }
+.on-dark .text-orange-text { color: #ffb37a; }
+.on-dark .link { color: #ffb37a; }
+
+/* Scroll reveal. Only hides content once JS has marked the page, so nothing is lost without JS. */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--rd, 0s);
+}
+.js [data-reveal].in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Children of a revealed section come in one after another. */
+.js [data-reveal] .stagger > * {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.js [data-reveal].in .stagger > * { opacity: 1; transform: none; }
+.stagger > :nth-child(1) { transition-delay: 0.1s; }
+.stagger > :nth-child(2) { transition-delay: 0.18s; }
+.stagger > :nth-child(3) { transition-delay: 0.26s; }
+.stagger > :nth-child(4) { transition-delay: 0.34s; }
+.stagger > :nth-child(5) { transition-delay: 0.42s; }
+.stagger > :nth-child(6) { transition-delay: 0.5s; }
+.stagger > :nth-child(7) { transition-delay: 0.58s; }
+.stagger > :nth-child(n + 8) { transition-delay: 0.66s; }
+
+/* Reading progress, driven by scroll alone (no JS). */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 60; height: 3px;
+  background: var(--orange); transform-origin: 0 50%; transform: scaleX(0); pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-progress { animation: progress-grow linear both; animation-timeline: scroll(root); }
+  @keyframes progress-grow { to { transform: scaleX(1); } }
+}
+@supports not (animation-timeline: scroll()) { .scroll-progress { display: none; } }
+
+/* Header: sticks after you scroll, hides while scrolling down, returns on the way up. */
+header[data-site].stuck {
+  position: fixed; inset: 0 0 auto;
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  color: var(--ink) !important;
+  box-shadow: 0 1px 0 var(--line);
+  animation: header-drop 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+header[data-site].stuck.on-dark .text-orange-text { color: var(--orange-text); }
+header[data-site].stuck.hide { transform: translateY(-100%); }
+@keyframes header-drop { from { transform: translateY(-100%); } }
+
+/* Arrows nudge forward on hover. */
+.arr { display: inline-block; transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1); }
+a:hover .arr, .link:hover .arr { transform: translateX(4px); }
+
+/* FAQ opens smoothly where the browser supports it. */
+:root { interpolate-size: allow-keywords; }
+details::details-content {
+  height: 0; overflow: clip;
+  transition: height 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), content-visibility 0.35s allow-discrete;
+}
+details[open]::details-content { height: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] { opacity: 1; transform: none; }
+  .js [data-reveal] .stagger > * { opacity: 1; transform: none; }
+  .scroll-progress { display: none; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

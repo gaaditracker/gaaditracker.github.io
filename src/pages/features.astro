@@ -1,0 +1,101 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Placeholder from '../components/Placeholder.astro';
+import Download from '../components/Download.astro';
+import OwnerReport from '../components/screens/OwnerReport.astro';
+import DriverAddEarning from '../components/screens/DriverAddEarning.astro';
+import Journey, { type JourneyGroup } from '../components/Journey.astro';
+import { breadcrumbs, apps } from '../data/schema';
+
+const path = '/features';
+
+// The driver's day, in the order it happens. Same facts as before, laid out as a road.
+const journey: JourneyGroup[] = [
+  { phase: 'Before the shift', stops: [
+    ['Reminders', 'A note before starting a shift when road tax or a service is due. It never blocks the shift.'],
+  ] },
+  { phase: 'Start', stops: [
+    ['Start the shift', 'Type the odometer reading. A start km below the vehicle’s last reading is blocked.'],
+  ] },
+  { phase: 'On the road', stops: [
+    ['Earnings by platform', 'Pick Uber, Ola, Rapido, local trips or any platform the owner has named, and type the amount. Lorries and trucks enter tons × rate per ton.'],
+    ['Fuel', 'Petrol, diesel, CNG in kg or LPG. Only the fuel types the vehicle uses are shown.'],
+    ['FASTag and expenses', 'Parking, service, repair, tyre, cleaning, app recharge or other, each in its own category.'],
+  ] },
+  { phase: 'End of day', stops: [
+    ['End the shift', 'Odometer reading out. An end km that isn’t higher than the start is blocked.'],
+    ['Own balance', '“Balance to pay owner” or “Owner owes you”, with every advance and payment listed.'],
+  ] },
+  { phase: 'Anytime', stops: [
+    ['Add a past trip', 'Forgot to start a shift? Add it later, up to one year back. It goes to the owner for approval.'],
+    ['Works offline', 'Everything saves on the phone and syncs when the network returns.'],
+  ] },
+];
+
+// The owner's side, in the order you meet it: set up once, then daily, then planning and review.
+const owner: JourneyGroup[] = [
+  { phase: 'Set up once', stops: [
+    ['Vehicles and drivers', 'Add vehicles and drivers, create each driver’s login and assign a vehicle to each driver.'],
+    ['Four pay models', 'Percentage of revenue, slab, fixed daily rent or monthly salary over 26 working days. Changing a rule keeps old shifts on the old rule.'],
+  ] },
+  { phase: 'Every day', stops: [
+    ['Dashboard', 'Live shifts, today’s revenue and expenses, and alerts, across every vehicle.'],
+    ['Push notifications', 'When a shift starts or ends, and when a driver edits a trip.'],
+  ] },
+  { phase: 'When it needs you', stops: [
+    ['Approvals', 'Edited shift times or km, added past trips and recorded services wait for you. Reject puts the original back. Approve a shift to lock it.'],
+  ] },
+  { phase: 'Stay ahead', stops: [
+    ['Service reminders', 'By km or by date, whichever comes first.'],
+    ['Road tax reminders', 'Quarterly, for lorries, trucks, vans and buses, with “Mark paid”.'],
+  ] },
+  { phase: 'Review', stops: [
+    ['Reports', 'Revenue, fuel, expenses, driver cost and profit by vehicle, driver, platform or date range. Export as CSV or PDF.'],
+    ['Fuel average', 'Km per litre, or per kg for CNG, for lorries, trucks, vans and buses.'],
+    ['Vehicle status', 'Active, Inactive (off the road, keeps its driver) or Disabled (sold, kept in history).'],
+  ] },
+];
+---
+<Base
+  title="Features: Driver App and Owner App | Gaadi Tracker"
+  description="Every feature of the Gaadi Tracker Owner and Driver apps: odometer checks, earnings by platform, fuel, pay models, approvals, reminders and reports."
+  path={path}
+  schema={[breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Features', path }]), ...apps()]}>
+  <PageIntro crumb="Features" path={path} eyebrow="Features" title="Two apps. One for you, one for each driver."
+    answer="Gaadi Tracker is two Android apps that share one account. Drivers record shifts, earnings, fuel and expenses in the Driver app. You see it all in the Owner app, set pay rules, approve changes and get reminders." />
+
+  <section class="wrap grid gap-12 py-8 lg:grid-cols-[1fr_auto] lg:gap-16" aria-labelledby="drv-h">
+    <div>
+      <p class="eyebrow text-orange-text">Gaadi Tracker Driver</p>
+      <h2 id="drv-h" class="mt-2 text-[2rem] sm:text-[2.5rem]">What the driver does</h2>
+      <p class="mt-3 max-w-[34rem] text-[1.0625rem] text-muted">One shift, start to finish. Follow the road.</p>
+
+      <Journey class="mt-12" groups={journey} end="Owner approves. Shift locked." />
+    </div>
+    <div class="flex justify-center lg:block"><div class="lg:sticky lg:top-28"><Placeholder label="Real screenshot: Add earning"><DriverAddEarning /></Placeholder></div></div>
+  </section>
+
+  <section class="mt-16 border-y border-line bg-indigo-soft py-16 md:py-24" aria-labelledby="own-h">
+    <div class="wrap grid gap-12 lg:grid-cols-[auto_1fr] lg:gap-16">
+      <div class="order-2 flex justify-center lg:order-1 lg:block"><div class="lg:sticky lg:top-28"><Placeholder label="Real screenshot: Report"><OwnerReport /></Placeholder></div></div>
+      <div class="order-1 lg:order-2">
+        <p class="eyebrow text-indigo-text">Gaadi Tracker Owner</p>
+        <h2 id="own-h" class="mt-2 text-[2rem] sm:text-[2.5rem]">What you see and control</h2>
+        <p class="mt-3 max-w-[34rem] text-[1.0625rem] text-muted">Set it up once. Then just watch the numbers.</p>
+        <Journey class="mt-12" groups={owner} tone="indigo" icon="eye" end="Every vehicle. Every rupee. One app." />
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap py-16" aria-labelledby="who-h">
+    <h2 id="who-h" class="text-[1.75rem] sm:text-[2.25rem]">See it for your vehicles</h2>
+    <ul class="mt-6 grid gap-x-10 sm:grid-cols-3">
+      {[['/taxi-fleet-management-app', 'Taxi and cab fleets'], ['/auto-rickshaw-owner-app', 'Auto-rickshaw owners'], ['/truck-fleet-management-app', 'Lorry and truck owners']].map(([h, l]) => (
+        <li class="border-b border-line"><a href={h} class="flex min-h-[56px] items-center justify-between font-semibold no-underline hover:text-orange-text">{l}<span class="arr" aria-hidden="true">→</span></a></li>
+      ))}
+    </ul>
+  </section>
+
+  <Download campaign="features" />
+</Base>

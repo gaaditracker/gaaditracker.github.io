@@ -1,0 +1,118 @@
+---
+import '../styles/global.css';
+import heroFont from '@fontsource/google-sans/files/google-sans-latin-600-normal.woff2?url';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Consent from '../components/Consent.astro';
+import { site } from '../data/site';
+import { organization } from '../data/schema';
+import { translated, ui, type Lang } from '../i18n/ui';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Path without trailing slash, e.g. "/features" or "/" */
+  path: string;
+  lang?: Lang;
+  schema?: object[];
+  type?: 'website' | 'article';
+  noindex?: boolean;
+  /** Header sits over a dark full-bleed hero. */
+  overlayHeader?: boolean;
+}
+
+const { title, description, path, lang = 'en', schema = [], type = 'website', noindex = false, overlayHeader = false } = Astro.props;
+const t = ui[lang];
+
+const canonicalOf = (p: string) => site.url + (p === '/' ? '/' : `${p}/`);
+const canonical = canonicalOf(path);
+
+// hreflang pairs for pages that exist in both languages.
+const enPath = lang === 'en' ? path : Object.keys(translated).find((k) => translated[k] === path);
+const hiPath = enPath ? translated[enPath] : undefined;
+const alternates = enPath && hiPath ? { 'en-IN': canonicalOf(enPath), 'hi-IN': canonicalOf(hiPath), 'x-default': canonicalOf(enPath) } : null;
+
+// One share image per English page; Hindi pages reuse their English twin's image.
+const ogBase = enPath ?? path;
+const ogSlug = ogBase === '/' ? 'home' : ogBase.replace(/^\//, '').replaceAll('/', '--');
+const ogImage = `${site.url}/og/${ogSlug}.png`;
+
+const jsonLd = [organization(), ...schema];
+---
+<!doctype html>
+<html lang={lang === 'hi' ? 'hi-IN' : 'en-IN'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {alternates && Object.entries(alternates).map(([hl, href]) => <link rel="alternate" hreflang={hl} href={href} />)}
+
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/icon-192.png" sizes="192x192" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preload" href={heroFont} as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:site_name" content="Gaadi Tracker" />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={lang === 'hi' ? 'hi_IN' : 'en_IN'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    {site.searchConsoleToken && <meta name="google-site-verification" content={site.searchConsoleToken} />}
+
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      try {
+        var s = localStorage.getItem('theme');
+        if (s === 'light' || s === 'dark') document.documentElement.dataset.theme = s;
+      } catch (e) {}
+    </script>
+    {jsonLd.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
+  </head>
+  <body class="min-h-screen">
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-4 focus:py-3 focus:text-bg">{t.skip}</a>
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <div data-header-slot><Header lang={lang} path={path} overlay={overlayHeader} /></div>
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+    <Consent lang={lang} />
+    <script>
+      // Fade sections in as they scroll into view. The first section (hero) is never hidden.
+      const targets = document.querySelectorAll<HTMLElement>('main section:not(:first-of-type), [data-reveal]');
+      targets.forEach((el) => el.setAttribute('data-reveal', ''));
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+        targets.forEach((el) => io.observe(el));
+      } else targets.forEach((el) => el.classList.add('in'));
+
+      // Phone mock-ups tilt toward the pointer (mouse/trackpad only).
+      if (matchMedia('(hover: hover) and (pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll<HTMLElement>('.phone').forEach((ph) => {
+          ph.addEventListener('pointermove', (e) => {
+            const r = ph.getBoundingClientRect();
+            ph.style.setProperty('--pry', `${((e.clientX - r.left) / r.width - 0.5) * 14}deg`);
+            ph.style.setProperty('--prx', `${-((e.clientY - r.top) / r.height - 0.5) * 10}deg`);
+          });
+          ph.addEventListener('pointerleave', () => { ph.style.removeProperty('--pry'); ph.style.removeProperty('--prx'); });
+        });
+      }
+    </script>
+  </body>
+</html>

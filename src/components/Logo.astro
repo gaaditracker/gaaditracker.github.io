@@ -1,0 +1,10 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+interface Props { href?: string; size?: number }
+const { href = '/', size = 36 } = Astro.props;
+---
+<a href={href} class="inline-flex items-center gap-2.5 no-underline min-h-[44px]" aria-label="Gaadi Tracker home">
+  <Image src={logo} alt="" width={size} height={size} loading="eager" class="rounded-[22%]" />
+  <span class="font-display text-[1.25rem] font-semibold tracking-[-0.02em] leading-none">Gaadi Tracker</span>
+</a>

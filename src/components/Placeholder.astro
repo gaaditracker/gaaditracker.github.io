@@ -1,0 +1,11 @@
+---
+/** Wraps a slot that still needs real content (screenshot, photo, testimonial). */
+import { site } from '../data/site';
+interface Props { label: string; class?: string }
+const { label, class: cls = '' } = Astro.props;
+const show = site.showPlaceholders;
+---
+<div class:list={[cls, show && 'ph']} data-placeholder={label}>
+  {show && <span class="ph-label">{label}</span>}
+  <slot />
+</div>

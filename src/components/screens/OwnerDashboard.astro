@@ -1,0 +1,41 @@
+---
+import Phone from '../Phone.astro';
+interface Props { class?: string }
+const shifts = [
+  { plate: 'TN 23 TK 4521', who: 'Ravi', km: 182, rev: 3450, live: false },
+  { plate: 'TN 09 BX 7716', who: 'Murugan', km: 141, rev: 2780, live: true },
+  { plate: 'TN 22 CQ 1048', who: 'Arif', km: 96, rev: 1960, live: true },
+  { plate: 'TN 10 AH 6083', who: 'Senthil', km: 0, rev: 0, live: false, off: true },
+];
+const f = (n: number) => '₹' + n.toLocaleString('en-IN');
+---
+<Phone side="owner" time="9:15" class={Astro.props.class}
+  label="Owner app dashboard: today ₹8,190 revenue from 3 cabs, two shifts live, one road tax reminder.">
+  <div class="s-bar">
+    <div><div class="s-sub">Thursday, 12 Nov</div><div class="s-title">Today</div></div>
+    <span class="s-chip">2 live</span>
+  </div>
+  <div class="s-body">
+    <div class="s-card">
+      <div class="s-label">Revenue today</div>
+      <div class="s-big">₹8,190</div>
+      <div class="s-row"><span class="s-label">Fuel + expenses</span><span>₹2,640</span></div>
+      <div class="s-row"><span class="s-label">Km driven</span><span>419 km</span></div>
+    </div>
+    <div class="s-card" style="border-color:#f5d48a;background:#fffaf0">
+      <div class="s-row"><span style="font-weight:700">Road tax</span><span class="s-chip warn">Due 1 Jan</span></div>
+      <div class="s-sub">TN 07 AV 2290 · Jan–Mar quarter</div>
+    </div>
+    {shifts.map((s) => (
+      <div class="s-card">
+        <div class="s-row">
+          <span class="s-plate">{s.plate}</span>
+          {s.off ? <span class="s-chip mute">No shift</span> : s.live ? <span class="s-chip ok"><span class="s-dot"></span>On shift</span> : <span class="s-chip mute">Ended</span>}
+        </div>
+        {!s.off && <div class="s-row"><span class="s-label">{s.who} · {s.km} km</span><span style="font-weight:700">{f(s.rev)}</span></div>}
+        {s.off && <div class="s-row"><span class="s-label">{s.who}</span></div>}
+      </div>
+    ))}
+  </div>
+  <div class="s-nav"><span class="on">Home</span><span>Vehicles</span><span>Drivers</span><span>Reports</span></div>
+</Phone>

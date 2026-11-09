@@ -1,0 +1,34 @@
+---
+/**
+ * Google Play badge. Drop the official artwork into
+ *   public/badges/google-play-en.png and public/badges/google-play-hi.png
+ * (from https://play.google.com/intl/en_us/badges/) and it is used automatically.
+ * Until then a plain text button stands in, without imitating Google's logo.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import { playUrl, site, type AppKey } from '../data/site';
+import { ui, type Lang } from '../i18n/ui';
+
+interface Props { app: AppKey; campaign: string; lang?: Lang; label?: boolean }
+const { app, campaign, lang = 'en', label = true } = Astro.props;
+const t = ui[lang];
+const file = `badges/google-play-${lang}.png`;
+const hasBadge = fs.existsSync(path.join(process.cwd(), 'public', file));
+const appLabel = app === 'owner' ? t.ownerApp : t.driverApp;
+const href = playUrl(app, campaign, lang);
+---
+<div class="flex flex-col gap-1.5">
+  {label && <span class={`text-[0.8125rem] font-semibold ${app === 'owner' ? 'text-indigo-text' : 'text-orange-text'}`}>{appLabel}</span>}
+  <a href={href} rel="noopener" class="inline-flex min-h-[48px] items-center no-underline transition-transform duration-300 hover:-translate-y-0.5"
+     aria-label={`${site.apps[app].name}: ${t.badge.pre} ${t.badge.store}`}>
+    {hasBadge ? (
+      <img src={`/${file}`} alt="" width="180" height="53" class="h-[53px] w-auto" />
+    ) : (
+      <span class="inline-flex h-[53px] flex-col justify-center rounded-[10px] border border-[#a6a6a6] bg-black px-4 text-white leading-tight">
+        <span class="text-[0.625rem] font-semibold tracking-wide">{t.badge.pre}</span>
+        <span class="text-[1.1875rem] font-semibold tracking-tight">{t.badge.store}</span>
+      </span>
+    )}
+  </a>
+</div>

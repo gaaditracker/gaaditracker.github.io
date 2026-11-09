@@ -1,0 +1,46 @@
+---
+import Phone from '../Phone.astro';
+interface Props { class?: string; kind?: 'cab' | 'auto' | 'truck' }
+const { kind = 'cab' } = Astro.props;
+const label = {
+  cab: 'Driver app, add earning: platform Uber selected, amount ₹3,450.',
+  auto: 'Driver app, add earning for an auto: Rapido selected, amount ₹1,280.',
+  truck: 'Driver app, add lorry earning: 18.5 tons at ₹1,450 per ton equals ₹26,825.',
+}[kind];
+---
+<Phone side="driver" time={kind === 'truck' ? '4:20' : '9:58'} class={Astro.props.class} label={label}>
+  <div class="s-bar"><div><div class="s-sub">{kind === 'truck' ? 'TN 07 AV 2290 · Selvam' : kind === 'auto' ? 'TN 11 F 2207 · Babu' : 'TN 23 TK 4521 · Ravi'}</div><div class="s-title">Add earning</div></div></div>
+  <div class="s-body">
+    {kind === 'truck' ? (
+      <>
+        <div class="s-label">Load</div>
+        <div class="s-card"><div class="s-row"><span>Salem → Chennai</span><span class="s-chip mute">Cement</span></div></div>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1"><div class="s-label" style="margin-bottom:4px">Tons</div><div class="s-input">18.5</div></div>
+          <div style="flex:1"><div class="s-label" style="margin-bottom:4px">Rate per ton</div><div class="s-input">₹1,450</div></div>
+        </div>
+        <div class="s-card" style="background:var(--app-soft);border-color:transparent">
+          <div class="s-row"><span class="s-label">18.5 × ₹1,450</span><span class="s-mid s-accent">₹26,825</span></div>
+        </div>
+      </>
+    ) : (
+      <>
+        <div class="s-label">Platform</div>
+        <div class="s-pills">
+          {(kind === 'auto' ? ['Rapido', 'Uber', 'Local trips'] : ['Uber', 'Ola', 'Rapido', 'Local trips']).map((p, i) => <span class:list={['s-pill', i === 0 && 'on']}>{p}</span>)}
+        </div>
+        <div class="s-label" style="margin-top:4px">Amount</div>
+        <div class="s-input">{kind === 'auto' ? '₹1,280' : '₹3,450'}</div>
+        <div class="s-card">
+          <div class="s-row"><span class="s-label">Today so far</span><span style="font-weight:700">{kind === 'auto' ? '₹1,280' : '₹3,450'}</span></div>
+          <div class="s-row"><span class="s-label">{kind === 'auto' ? 'LPG' : 'CNG'}</span><span>{kind === 'auto' ? '₹420' : '₹1,100 · 12.8 kg'}</span></div>
+        </div>
+      </>
+    )}
+    <div style="flex:1"></div>
+    <div class="s-card" style="display:flex;gap:6px;align-items:center;background:#f2f2f7">
+      <span class="s-chip mute">Offline</span><span class="s-sub">Saved on phone. Syncs when network is back.</span>
+    </div>
+    <div class="s-btn">Save</div>
+  </div>
+</Phone>

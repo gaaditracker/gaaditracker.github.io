@@ -1,0 +1,104 @@
+/* Mock app screens drawn in HTML. They stand in for real screenshots
+   until those arrive (see PLACEHOLDERS.md). Always rendered light, like the app. */
+.phone {
+  --app: #f76707;
+  --app-soft: #fff1e0;
+  width: 272px;
+  max-width: 100%;
+  aspect-ratio: 9 / 19;
+  border-radius: 38px;
+  border: 9px solid var(--phone);
+  background: #fbfbfd;
+  color: #1d1d1f;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -30px rgb(31 25 21 / 0.45), 0 0 0 1px rgb(255 255 255 / 0.04);
+  font-family: 'Google Sans', system-ui, sans-serif;
+  font-size: 11.5px;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.phone.owner { --app: #4f46e5; --app-soft: #ecebfd; }
+.phone * { box-sizing: border-box; }
+.s-status { display: flex; justify-content: space-between; padding: 8px 18px 4px; font-size: 10.5px; font-weight: 600; }
+.s-status i { display: inline-block; width: 14px; height: 8px; border: 1.2px solid currentColor; border-radius: 2px; margin-left: 4px; position: relative; }
+.s-status i::after { content: ''; position: absolute; inset: 1px 4px 1px 1px; background: currentColor; border-radius: 1px; }
+.s-bar { display: flex; align-items: center; justify-content: space-between; padding: 6px 14px 10px; }
+.s-title { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+.s-sub { color: #6e6e73; font-size: 10.5px; }
+.s-body { padding: 0 12px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; overflow: hidden; }
+.s-card { background: #fff; border: 1px solid #e8e8ed; border-radius: 12px; padding: 10px 11px; }
+.s-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.s-row + .s-row { margin-top: 5px; }
+.s-label { color: #6e6e73; }
+.s-big { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+.s-mid { font-size: 14px; font-weight: 700; }
+.s-plate { font-weight: 700; letter-spacing: 0.02em; }
+.s-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; background: var(--app-soft); color: var(--app); font-size: 10px; font-weight: 700; }
+.s-chip.ok { background: #e7f6ec; color: #157a3a; }
+.s-chip.warn { background: #fff4d6; color: #8a5a00; }
+.s-chip.bad { background: #fde8e8; color: #b42318; }
+.s-chip.mute { background: #f2f2f7; color: #6e6e73; }
+.s-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: inline-block; }
+.s-btn { display: flex; align-items: center; justify-content: center; height: 34px; border-radius: 10px; background: var(--app); color: #fff; font-weight: 700; font-size: 12px; }
+.s-btn.ghost { background: transparent; color: #1d1d1f; border: 1px solid #d2d2d7; }
+.s-input { border: 1.5px solid #d2d2d7; border-radius: 10px; padding: 7px 10px; font-size: 15px; font-weight: 700; background: #fff; }
+.s-input.err { border-color: #b42318; }
+.s-err { color: #b42318; font-size: 10.5px; margin-top: 4px; }
+.s-hr { height: 1px; background: #e8e8ed; margin: 6px 0; }
+.s-nav { display: flex; justify-content: space-around; border-top: 1px solid #e8e8ed; padding: 7px 0 9px; font-size: 9.5px; color: #6e6e73; background: #fff; }
+.s-nav span { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.s-nav span::before { content: ''; width: 16px; height: 3px; border-radius: 2px; background: #d2d2d7; }
+.s-nav .on { color: var(--app); font-weight: 700; }
+.s-nav .on::before { background: var(--app); }
+.s-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+.s-pill { padding: 4px 10px; border-radius: 999px; border: 1px solid #d2d2d7; font-weight: 600; font-size: 10.5px; }
+.s-pill.on { background: var(--app); border-color: var(--app); color: #fff; }
+.s-green { color: #157a3a; }
+.s-red { color: #b42318; }
+.s-accent { color: var(--app); }
+
+/* ── Phone mock-up interaction ──────────────────────────────────────────
+   Mouse/trackpad: the phone lifts, tilts toward the pointer (--pry/--prx set
+   in Base.astro) and a soft light sweeps across the glass.
+   Touch: a gentle press-in on tap. Off entirely for reduced motion. */
+.phone {
+  position: relative;
+  transform: perspective(1100px) rotateX(var(--prx, 0deg)) rotateY(var(--pry, 0deg)) translateY(var(--lift, 0px)) scale(var(--pscale, 1));
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.6s ease;
+  will-change: transform;
+}
+.phone::after {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  z-index: 10;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, rgb(255 255 255 / 0.38) 48%, rgb(255 255 255 / 0.12) 54%, transparent 62%);
+  transform: translateX(-75%);
+  opacity: 0;
+}
+@media (hover: hover) and (pointer: fine) {
+  .phone:hover {
+    --lift: -10px;
+    transition: transform 0.18s ease-out, box-shadow 0.5s ease;
+    box-shadow: 0 46px 80px -34px rgb(31 25 21 / 0.55), 0 18px 40px -24px rgb(247 103 7 / 0.45), 0 0 0 1px rgb(255 255 255 / 0.06);
+  }
+  .phone:hover::after {
+    opacity: 1;
+    transform: translateX(75%);
+    transition: transform 1.1s cubic-bezier(0.3, 0.6, 0.2, 1), opacity 0.2s;
+  }
+  .phone.owner:hover {
+    box-shadow: 0 46px 80px -34px rgb(31 25 21 / 0.55), 0 18px 40px -24px rgb(79 70 229 / 0.5), 0 0 0 1px rgb(255 255 255 / 0.06);
+  }
+}
+@media (hover: none) {
+  .phone:active { --pscale: 0.975; transition: transform 0.15s ease-out; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .phone, .phone:hover, .phone:active { transform: none; transition: box-shadow 0.3s; }
+  .phone::after { display: none; }
+}

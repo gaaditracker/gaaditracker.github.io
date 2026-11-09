@@ -1,0 +1,12 @@
+---
+import Base from './Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import { breadcrumbs } from '../data/schema';
+type Meta = { title: string; metaTitle: string; description: string; path: string; updated: string };
+interface Props { frontmatter: Meta }
+const { title, metaTitle, description, path, updated } = Astro.props.frontmatter;
+---
+<Base title={metaTitle} description={description} path={path} schema={[breadcrumbs([{ name: 'Home', path: '/' }, { name: title, path }])]}>
+  <PageIntro crumb={title} path={path} title={title} updated={updated} />
+  <div class="wrap"><div class="prose"><slot /></div></div>
+</Base>

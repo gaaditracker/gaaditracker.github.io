@@ -1,0 +1,525 @@
+---
+import Base from '../layouts/Base.astro';
+import Odometer from './Odometer.astro';
+import PlayBadges from './PlayBadges.astro';
+import Placeholder from './Placeholder.astro';
+import Faq from './Faq.astro';
+import Download from './Download.astro';
+import OwnerDashboard from './screens/OwnerDashboard.astro';
+import DriverAddEarning from './screens/DriverAddEarning.astro';
+import DriverStartShift from './screens/DriverStartShift.astro';
+import DriverBalance from './screens/DriverBalance.astro';
+import OwnerAlerts from './screens/OwnerAlerts.astro';
+import { home } from '../i18n/home';
+import { homeFaqs, homeFaqsHi } from '../data/faq';
+import { apps, faqPage } from '../data/schema';
+import type { Lang } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = home[lang];
+const faqs = (lang === 'hi' ? homeFaqsHi : homeFaqs).slice(0, 5);
+const path = lang === 'hi' ? '/hi' : '/';
+const campaign = lang === 'hi' ? 'home_hi' : 'home';
+const storyScreens = [DriverStartShift, DriverBalance, OwnerAlerts];
+const storyLabels = ['Real screenshot: Start shift', 'Real screenshot: Driver balance', 'Real screenshot: Owner alerts'];
+
+// Pay models: same maths as the app (lib/domain/calc.dart).
+const calcStart = 3450;
+// CSS that shows the chosen time slot in the day timeline (radio + :has, no JS needed).
+const dayCss = c.day.rows
+  .map((_, i) => `.day:has(#day-${i}:checked) [data-slot="${i}"]{display:grid}.day:has(#day-${i}:checked) label[for="day-${i}"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}`)
+  .join('');
+---
+<Base title={c.meta.title} description={c.meta.description} path={path} lang={lang} schema={[...apps(), faqPage(faqs)]} overlayHeader>
+
+  <!-- ───────── Hero: dark, full bleed, Owner/Driver switch ───────── -->
+  <section class="hero on-dark relative overflow-hidden bg-[var(--deep)] text-[#f5f5f7]">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="wrap relative grid min-h-[100svh] items-center gap-14 pb-16 pt-28 lg:grid-cols-[1.15fr_1fr] lg:pt-24">
+      <div>
+        <p class="hero-in text-[0.9375rem] font-medium text-[var(--deep-muted)]" style="--d:0s">{c.hero.eyebrow}</p>
+        <h1 class="mt-5 text-[3.4rem] leading-[0.98] sm:text-[5rem] lg:text-[6rem]">
+          {c.hero.h1.map((line, i) => (
+            <span class:list={['hero-in block', i === 2 && 'text-[#ff8f45]']} style={`--d:${0.08 + i * 0.12}s`}>{line}</span>
+          ))}
+        </h1>
+        <p class="hero-in mt-7 max-w-md text-[1.25rem] leading-snug text-[#dbe3f0] sm:text-[1.375rem]" style="--d:.5s">{c.hero.sub}</p>
+        <p class="sr-only">{c.hero.answer}</p>
+        <div class="hero-in mt-9" style="--d:.6s"><PlayBadges campaign={campaign} lang={lang} /></div>
+        <div class="hero-in mt-10 hidden sm:block" style="--d:.7s">
+          <Odometer caption={c.hero.odoCaption} label={c.hero.odoLabel} />
+        </div>
+      </div>
+
+      <div class="hero-in flex flex-col items-center gap-8" style="--d:.3s">
+        <fieldset class="role-switch">
+          <legend class="sr-only">{c.hero.switchLabel}</legend>
+          <input type="radio" name="role" id="role-owner" checked class="sr-only" />
+          <label for="role-owner">{c.hero.owner}</label>
+          <input type="radio" name="role" id="role-driver" class="sr-only" />
+          <label for="role-driver">{c.hero.driver}</label>
+          <span class="thumb" aria-hidden="true"></span>
+        </fieldset>
+        <div class="tilt"><div class="phones">
+          <div class="ph-owner"><Placeholder label="Real screenshot: Owner dashboard"><OwnerDashboard /></Placeholder></div>
+          <div class="ph-driver"><Placeholder label="Real screenshot: Driver add earning"><DriverAddEarning /></Placeholder></div>
+        </div></div>
+      </div>
+    </div>
+    <a href="#pain" class="absolute bottom-6 left-1/2 hidden -translate-x-1/2 items-center gap-2 text-[0.875rem] text-[var(--deep-muted)] no-underline hover:text-white lg:flex">
+      {c.hero.scroll}<span class="bob" aria-hidden="true">↓</span>
+    </a>
+  </section>
+
+  <!-- ───────── Pain: chat bubbles pop in ───────── -->
+  <section id="pain" class="wrap grid items-center gap-14 py-24 md:grid-cols-2 md:py-36">
+    <div>
+      <h2 class="text-[2.6rem] sm:text-[3.75rem]">{c.pain.h2}</h2>
+      <p class="mt-6 max-w-md text-[1.25rem] text-muted">{c.pain.sub}</p>
+    </div>
+    <div class="chat mx-auto w-full max-w-sm rounded-[1.75rem] bg-[#e5e5ea] p-5 dark:bg-[#1c1c1e]" role="img" aria-label={c.pain.chatLabel}>
+      <div aria-hidden="true" class="flex flex-col gap-2.5 text-[1rem] leading-snug text-[#1d1d1f]">
+        <p class="mb-1 text-[0.8125rem] font-medium text-[#6e6e73] dark:text-[var(--deep-muted)]">Ravi · TN 23 TK 4521</p>
+        {c.pain.chat.map((m, i) => (
+          <>
+            {i === 1 && <div class="typing" aria-hidden="true"><span></span><span></span><span></span></div>}
+            <div class:list={['bubble max-w-[82%] rounded-2xl px-3.5 py-2.5', m.me ? 'ml-auto rounded-br-md bg-[#d9fdd3]' : 'rounded-bl-md bg-white']} style={`--t:${[0.25, 1.9, 2.5, 3.3][i]}s`}>
+              {m.text}<span class="ml-2 align-bottom text-[0.6875rem] text-[#6e6e73]">{m.time}</span>
+            </div>
+          </>
+        ))}
+        <p class="bubble text-right text-[0.75rem] text-[#6e6e73] dark:text-[var(--deep-muted)]" style="--t:4s">{c.pain.seen}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── Story: sticky phone swaps as you scroll ───────── -->
+  <section class="bg-surface py-24 md:py-32" aria-labelledby="story-h">
+    <div class="wrap">
+      <p class="eyebrow text-orange-text">{c.story.eyebrow}</p>
+      <h2 id="story-h" class="mt-3 text-[2.6rem] sm:text-[3.75rem]">{c.story.h2}</h2>
+    </div>
+    <div class="story wrap mt-8 lg:grid lg:grid-cols-2 lg:gap-16" data-step="0">
+      <div class="story-steps relative">
+        {c.story.steps.map((s, i) => {
+          const Screen = storyScreens[i];
+          return (
+            <article class="story-step" data-i={i}>
+              <p class="eyebrow">{s.tag}</p>
+              <h3 class="mt-3 text-[2.25rem] sm:text-[3rem]">{s.title}</h3>
+              <p class="mt-4 max-w-md text-[1.1875rem] text-muted">{s.text}</p>
+              <p class="num mt-6 inline-flex self-start rounded-full bg-bg px-4 py-2 text-[0.9375rem] font-medium">{s.fact}</p>
+              <div class="mt-10 flex justify-center lg:hidden"><Placeholder label={storyLabels[i]}><Screen /></Placeholder></div>
+            </article>
+          );
+        })}
+      </div>
+      <div class="story-stage hidden lg:block" aria-hidden="true">
+        <div class="story-sticky">
+          {storyScreens.map((Screen, i) => (
+            <div class="story-screen" data-s={i}><Placeholder label={storyLabels[i]}><Screen /></Placeholder></div>
+          ))}
+          <div class="story-dots">{storyScreens.map((_, i) => <span data-s={i}></span>)}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── Pay slider ───────── -->
+  <section class="wrap py-24 md:py-36" aria-labelledby="calc-h">
+    <div class="grid gap-12 lg:grid-cols-[1fr_1.15fr] lg:items-center">
+      <div>
+        <p class="eyebrow text-orange-text">{c.calc.eyebrow}</p>
+        <h2 id="calc-h" class="mt-3 text-[2.6rem] sm:text-[3.75rem]">{c.calc.h2}</h2>
+        <p class="mt-5 max-w-md text-[1.1875rem] text-muted">{c.calc.sub}</p>
+        <p class="mt-8"><a class="link" href="/driver-salary-commission-calculator">{c.calc.more} <span class="arr" aria-hidden="true">→</span></a></p>
+      </div>
+      <form id="mini-calc" class="rounded-[2rem] border border-line p-6 sm:p-9" onsubmit="return false">
+        <div class="seg" role="radiogroup" aria-label="Pay model">
+          {c.calc.models.map((m, i) => (
+            <label><input type="radio" name="m" value={i} checked={i === 0} class="sr-only" /><span>{m}</span></label>
+          ))}
+        </div>
+        <p id="mc-note" class="mt-4 min-h-[1.5em] text-[0.9375rem] text-muted">{c.calc.notes[0]}</p>
+        <label class="mt-8 block">
+          <span class="flex items-baseline justify-between">
+            <span class="font-medium">{c.calc.revenue}</span>
+            <output id="mc-rev" class="num text-[1.75rem] font-semibold">₹3,450</output>
+          </span>
+          <input id="mc-range" type="range" min="500" max="8000" step="50" value={calcStart} class="range mt-4 w-full" />
+        </label>
+        <div class="mt-8 grid grid-cols-2 gap-4">
+          <div class="calc-card rounded-2xl bg-peach-soft p-5">
+            <p class="text-[0.9375rem] font-medium">{c.calc.driver}</p>
+            <p id="mc-driver" class="num mt-1 text-[2.25rem] font-semibold leading-none text-orange-text sm:text-[2.75rem]">₹1,035</p>
+          </div>
+          <div class="calc-card rounded-2xl bg-indigo-soft p-5">
+            <p class="text-[0.9375rem] font-medium">{c.calc.owner}</p>
+            <p id="mc-owner" class="num mt-1 text-[2.25rem] font-semibold leading-none text-indigo-text sm:text-[2.75rem]">₹2,415</p>
+          </div>
+        </div>
+        <div class="split mt-5" aria-hidden="true"><span id="mc-bar"></span></div>
+        <p class="mt-3 text-[0.8125rem] text-muted">{c.calc.before}</p>
+      </form>
+    </div>
+    <script type="application/json" id="mc-notes" set:html={JSON.stringify(c.calc.notes)} />
+  </section>
+
+  <!-- ───────── One shift, two phones ───────── -->
+  <section class="day bg-surface py-24 md:py-32" aria-labelledby="day-h">
+    <style set:html={dayCss}></style>
+    <div class="wrap">
+      <p class="eyebrow text-orange-text">{c.day.eyebrow}</p>
+      <h2 id="day-h" class="mt-3 text-[2.6rem] sm:text-[3.75rem]">{c.day.h2}</h2>
+      <p class="mt-4 max-w-md text-[1.1875rem] text-muted">{c.day.sub}</p>
+
+      <fieldset class="mt-10">
+        <legend class="sr-only">{c.day.h2}</legend>
+        <div class="-mx-5 flex gap-2 overflow-x-auto px-5 pb-2 sm:mx-0 sm:flex-wrap sm:px-0">
+          {c.day.rows.map(([t], i) => (
+            <>
+              <input type="radio" name="day" id={`day-${i}`} checked={i === 0} class="sr-only" />
+              <label for={`day-${i}`} class="num min-h-[44px] shrink-0 cursor-pointer whitespace-nowrap rounded-full border-[1.5px] border-line bg-bg px-5 py-2.5 font-medium transition-colors">{t}</label>
+            </>
+          ))}
+        </div>
+      </fieldset>
+
+      <div class="day-progress mt-4" aria-hidden="true"><span></span></div>
+      <div class="mt-8 min-h-[13rem]">
+        {c.day.rows.map(([t, d, o], i) => (
+          <div class="slot hidden gap-4 md:grid-cols-2" data-slot={i}>
+            <div class="rounded-[1.5rem] bg-bg p-6 sm:p-8">
+              <p class="flex items-center gap-2 text-[0.875rem] font-medium text-orange-text"><span class="h-2 w-2 rounded-full bg-orange"></span>{c.day.driver}</p>
+              <p class="mt-4 text-[1.5rem] font-medium leading-snug sm:text-[1.75rem]">{d}</p>
+            </div>
+            <div class="rounded-[1.5rem] bg-[var(--deep)] p-6 text-[#f5f5f7] sm:p-8">
+              <p class="flex items-center gap-2 text-[0.875rem] font-medium text-[#b9b4ff]"><span class="h-2 w-2 rounded-full bg-[#8e88f7]"></span>{c.day.owner} · <span class="num">{t}</span></p>
+              <p class="mt-4 text-[1.5rem] font-medium leading-snug sm:text-[1.75rem]">{o}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── Offline demo ───────── -->
+  <section class="wrap py-24 md:py-36" aria-labelledby="off-h">
+    <div class="grid items-center gap-12 lg:grid-cols-2">
+      <div>
+        <p class="eyebrow text-orange-text">{c.offline.eyebrow}</p>
+        <h2 id="off-h" class="mt-3 text-[2.6rem] sm:text-[3.75rem]">{c.offline.h2}</h2>
+        <p class="mt-5 max-w-md text-[1.1875rem] text-muted">{c.offline.sub}</p>
+      </div>
+      <div id="offline" class="mx-auto w-full max-w-md rounded-[2rem] bg-[var(--deep)] p-6 text-[#f5f5f7] sm:p-8" data-online="true" aria-label={c.offline.demoLabel} role="group">
+        <div class="flex items-center justify-between gap-4">
+          <span class="flex items-center gap-3 font-medium"><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>{c.offline.net}</span>
+          <button type="button" id="net" role="switch" aria-checked="true" class="netsw">
+            <span class="sr-only">{c.offline.net}</span>
+            <span class="lbl-on">{c.offline.on}</span><span class="lbl-off">{c.offline.off}</span>
+          </button>
+        </div>
+        <ul id="queue" class="mt-6 grid gap-2" aria-live="polite">
+          <li class="q" data-state="synced"><span>{c.offline.entries[0]}</span><b>{c.offline.states.synced}</b></li>
+        </ul>
+        <p id="off-status" class="mt-4 text-[0.875rem] text-[var(--deep-muted)]" aria-live="polite">{c.offline.status.synced}</p>
+        <button type="button" id="add" class="btn btn-primary mt-6 w-full !text-white text-[1.1875rem] !font-bold">+ {c.offline.add}</button>
+      </div>
+    </div>
+    <script type="application/json" id="off-data" set:html={JSON.stringify({ entries: c.offline.entries, states: c.offline.states, status: c.offline.status })} />
+  </section>
+
+  <!-- ───────── Trust ───────── -->
+  <section class="wrap py-16" aria-labelledby="trust-h">
+    <h2 id="trust-h" class="text-[2.6rem] sm:text-[3.75rem]">{c.trust.h2}</h2>
+    <dl class="stagger mt-12 grid gap-px overflow-hidden rounded-[2rem] border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+      {c.trust.items.map(([t, d]) => (
+        <div class="trust-cell bg-bg p-7">
+          <dt class="text-[1.25rem] font-semibold">{t}</dt>
+          <dd class="mt-2 text-muted">{d}</dd>
+        </div>
+      ))}
+    </dl>
+    <Placeholder label="Testimonial (real owner only)" class="mt-10 rounded-[2rem] bg-surface p-8 sm:p-12">
+      <figure>
+        <blockquote class="max-w-3xl text-[1.5rem] font-medium leading-snug text-muted sm:text-[2rem]">“{c.trust.testimonial}”</blockquote>
+        <figcaption class="mt-4 text-[0.9375rem] text-muted">Name · City · Vehicles</figcaption>
+      </figure>
+    </Placeholder>
+  </section>
+
+  <!-- ───────── FAQ ───────── -->
+  <section class="wrap grid gap-8 py-20 md:grid-cols-[1fr_2fr] md:gap-16" aria-labelledby="faq-h">
+    <div>
+      <h2 id="faq-h" class="text-[2.6rem] sm:text-[3rem]">{c.faqTitle}</h2>
+      <p class="mt-4"><a class="link" href="/faq">{c.faqMore} <span class="arr" aria-hidden="true">→</span></a></p>
+    </div>
+    <Faq items={faqs} />
+  </section>
+
+  <Download lang={lang} campaign={campaign} title={c.cta.title} text={c.cta.text} />
+</Base>
+
+<style is:global>
+  /* Hero entrance: one soft rise, staggered. */
+  .hero-in { animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: var(--d, 0s); }
+  @keyframes rise { from { opacity: 0; transform: translateY(24px); } }
+  .hero-glow {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(60% 70% at 85% 95%, rgb(247 103 7 / 0.30), transparent 70%),
+      radial-gradient(50% 60% at 0% 0%, rgb(79 70 229 / 0.22), transparent 70%);
+  }
+  .bob { display: inline-block; animation: bob 1.8s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(4px); } }
+
+  /* Owner / Driver segmented switch */
+  .role-switch { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 999px; background: rgb(255 255 255 / 0.1); min-width: 17rem; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08); }
+  .role-switch label { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 1.25rem; border-radius: 999px; font-weight: 600; cursor: pointer; color: #dbe3f0; transition: color 0.3s; }
+  .role-switch .thumb { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 999px; background: #f5f5f7; transition: transform 0.45s cubic-bezier(0.3, 0.8, 0.2, 1); }
+  .role-switch:has(#role-driver:checked) .thumb { transform: translateX(100%); }
+  .role-switch:has(#role-owner:checked) label[for='role-owner'],
+  .role-switch:has(#role-driver:checked) label[for='role-driver'] { color: var(--deep); }
+  .role-switch:has(input:focus-visible) { outline: 3px solid var(--orange); outline-offset: 3px; }
+
+  /* Two phones, the chosen one comes forward. */
+  .phones { position: relative; width: 340px; max-width: 100%; height: 590px; }
+  .phones > div { position: absolute; top: 0; transition: transform 0.7s cubic-bezier(0.3, 0.8, 0.2, 1), opacity 0.5s, filter 0.5s; }
+  .ph-owner { left: 0; z-index: 2; }
+  .ph-driver { right: 0; z-index: 1; transform: translate(24px, 24px) scale(0.88); opacity: 0.45; filter: saturate(0.6); }
+  .hero:has(#role-driver:checked) .ph-owner { z-index: 1; transform: translate(-24px, 24px) scale(0.88); opacity: 0.45; filter: saturate(0.6); }
+  .hero:has(#role-driver:checked) .ph-driver { z-index: 2; transform: none; opacity: 1; filter: none; }
+  @media (max-width: 400px) { .phones { width: 300px; height: 560px; } }
+
+  /* Hero phones: slow float, and a gentle tilt that follows the pointer. */
+  .tilt { perspective: 1400px; }
+  .phones { transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); transform-style: preserve-3d; animation: float 7s ease-in-out 1.2s infinite; }
+  @keyframes float { 50% { translate: 0 -10px; } }
+
+  /* Chat bubbles pop in once the section reveals, with a typing pause before Ravi answers. */
+  .js .bubble { opacity: 0; transform: translateY(10px) scale(0.96); transition: opacity 0.5s, transform 0.5s cubic-bezier(0.3, 0.8, 0.2, 1); transition-delay: var(--t, 0s); }
+  .js .in .bubble { opacity: 1; transform: none; }
+  .typing { display: none; }
+  .js .typing { display: flex; gap: 4px; align-self: flex-start; padding: 0 14px; border-radius: 18px 18px 18px 6px; background: #fff; max-height: 0; opacity: 0; overflow: hidden; }
+  .js .in .typing { animation: typing-life 1.35s ease 0.6s both; }
+  .typing span { width: 7px; height: 7px; margin: 14px 0; border-radius: 50%; background: #8e8e93; animation: dot 1s ease-in-out infinite; }
+  .typing span:nth-child(2) { animation-delay: 0.15s; }
+  .typing span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes dot { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-4px); opacity: 1; } }
+  @keyframes typing-life { 0% { max-height: 0; opacity: 0; } 12%, 85% { max-height: 40px; opacity: 1; } 100% { max-height: 0; opacity: 0; } }
+
+  /* Sticky story */
+  .story-step { padding: 3.5rem 0; }
+  @media (min-width: 1024px) {
+    .story-step { min-height: 78vh; display: flex; flex-direction: column; justify-content: center; padding: 0; opacity: 0.25; transition: opacity 0.5s; }
+    .story[data-step='0'] .story-step[data-i='0'],
+    .story[data-step='1'] .story-step[data-i='1'],
+    .story[data-step='2'] .story-step[data-i='2'] { opacity: 1; }
+    .story-stage { position: relative; }
+    .story-sticky { position: sticky; top: 12vh; height: 76vh; display: flex; align-items: center; justify-content: center; }
+    .story-screen { position: absolute; opacity: 0; transform: translateY(30px) scale(0.96); transition: opacity 0.55s, transform 0.7s cubic-bezier(0.3, 0.8, 0.2, 1); }
+    .story[data-step='0'] .story-screen[data-s='0'],
+    .story[data-step='1'] .story-screen[data-s='1'],
+    .story[data-step='2'] .story-screen[data-s='2'] { opacity: 1; transform: none; }
+    .story-dots { position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: grid; gap: 10px; }
+    .story-dots span { width: 8px; height: 8px; border-radius: 99px; background: var(--line); transition: height 0.4s, background 0.4s; }
+    .story[data-step='0'] .story-dots [data-s='0'],
+    .story[data-step='1'] .story-dots [data-s='1'],
+    .story[data-step='2'] .story-dots [data-s='2'] { height: 28px; background: var(--orange); }
+  }
+
+  /* Pay slider */
+  .seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 4px; border-radius: 999px; background: var(--surface); }
+  .seg label { cursor: pointer; }
+  .seg span { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 0.5rem; border-radius: 999px; font-size: 0.875rem; font-weight: 600; text-align: center; line-height: 1.15; color: var(--ink-muted); transition: background 0.25s, color 0.25s; }
+  .seg input:checked + span { background: var(--bg); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 0.12); }
+  .seg input:focus-visible + span { outline: 3px solid var(--orange); outline-offset: 2px; }
+  .range { -webkit-appearance: none; appearance: none; height: 44px; background: transparent; cursor: pointer; }
+  .range::-webkit-slider-runnable-track { height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--orange) var(--p, 40%), var(--line) var(--p, 40%)); }
+  .range::-moz-range-track { height: 6px; border-radius: 99px; background: var(--line); }
+  .range::-moz-range-progress { height: 6px; border-radius: 99px; background: var(--orange); }
+  .range::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; margin-top: -11px; border-radius: 50%; background: #fff; border: 1px solid rgb(0 0 0 / 0.08); box-shadow: 0 2px 8px rgb(0 0 0 / 0.25); }
+  .range::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: #fff; border: 1px solid rgb(0 0 0 / 0.08); box-shadow: 0 2px 8px rgb(0 0 0 / 0.25); }
+  .split { height: 10px; border-radius: 99px; background: var(--indigo); overflow: hidden; }
+  .calc-card { transition: transform 0.25s cubic-bezier(0.3, 0.8, 0.2, 1); }
+  .calc-card.bump { transform: scale(1.03); }
+  .range:active::-webkit-slider-thumb { transform: scale(1.15); }
+  .range::-webkit-slider-thumb { transition: transform 0.2s; }
+  .split span { display: block; height: 100%; width: 30%; background: var(--orange); border-radius: 99px; transition: width 0.35s cubic-bezier(0.3, 0.8, 0.2, 1); }
+
+  /* Day timeline autoplay progress */
+  .day-progress { height: 3px; max-width: 34rem; border-radius: 99px; background: var(--line); overflow: hidden; opacity: 0; transition: opacity 0.3s; }
+  .day-progress.on { opacity: 1; }
+  .day-progress span { display: block; height: 100%; width: 0; background: var(--orange); border-radius: 99px; }
+  .day-progress.run span { animation: day-fill var(--dur, 3.8s) linear forwards; }
+  @keyframes day-fill { to { width: 100%; } }
+
+  /* Day slots fade when switched */
+  .slot { animation: fade 0.45s ease both; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } }
+
+  /* Offline demo */
+  .netsw { position: relative; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px 0 46px; border-radius: 999px; background: #30d158; color: #000; font-weight: 600; transition: background 0.3s; }
+  .netsw::before { content: ''; position: absolute; left: 6px; width: 32px; height: 32px; border-radius: 50%; background: #fff; transition: transform 0.3s; }
+  .netsw .lbl-off { display: none; }
+  #offline[data-online='false'] .netsw { background: var(--deep-3); color: #f5f5f7; }
+  #offline[data-online='false'] .netsw .lbl-on { display: none; }
+  #offline[data-online='false'] .netsw .lbl-off { display: inline; }
+  .q { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: var(--deep-2); font-size: 0.9375rem; animation: fade 0.35s ease both; }
+  .q b { font-weight: 600; font-size: 0.8125rem; padding: 3px 10px; border-radius: 99px; white-space: nowrap; }
+  .q[data-state='synced'] b { background: rgb(48 209 88 / 0.18); color: #6ee28a; }
+  .q[data-state='syncing'] b { background: rgb(255 214 10 / 0.16); color: #ffd60a; }
+  .q[data-state='phone'] b { background: rgb(255 143 69 / 0.18); color: #ffb37a; }
+  .q { animation: q-in 0.45s cubic-bezier(0.3, 0.8, 0.2, 1) both; }
+  @keyframes q-in { from { opacity: 0; transform: translateY(-12px) scale(0.97); } }
+  .q[data-state='syncing'] b::before { content: ''; display: inline-block; width: 9px; height: 9px; margin-right: 6px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; vertical-align: -1px; animation: spin 0.7s linear infinite; }
+  .q[data-state='synced'] b::before { content: '✓ '; display: inline-block; animation: pop 0.35s cubic-bezier(0.3, 1.6, 0.4, 1); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes pop { from { transform: scale(0.2); opacity: 0; } }
+  #offline { transition: box-shadow 0.4s; }
+  #offline[data-online='false'] { box-shadow: 0 0 0 2px rgb(255 143 69 / 0.55), 0 20px 50px -20px rgb(247 103 7 / 0.5); }
+  .bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
+  .bars i { width: 3px; border-radius: 1px; background: #30d158; transition: background 0.3s, opacity 0.3s; }
+  .bars i:nth-child(1) { height: 4px; } .bars i:nth-child(2) { height: 7px; } .bars i:nth-child(3) { height: 10px; } .bars i:nth-child(4) { height: 14px; }
+  #offline[data-online='false'] .bars i { background: #5b6b86; opacity: 0.5; }
+  #offline[data-online='false'] .bars i:nth-child(4) { transition-delay: 0s; } #offline[data-online='false'] .bars i:nth-child(3) { transition-delay: 0.08s; }
+  #offline[data-online='false'] .bars i:nth-child(2) { transition-delay: 0.16s; } #offline[data-online='false'] .bars i:nth-child(1) { transition-delay: 0.24s; }
+  #off-status { transition: color 0.3s; }
+
+  /* Trust cells respond to hover */
+  .trust-cell { transition: background-color 0.3s; position: relative; }
+  .trust-cell::before { content: ''; position: absolute; left: 1.75rem; right: 1.75rem; top: 0; height: 3px; border-radius: 0 0 3px 3px; background: var(--orange); transform: scaleX(0); transform-origin: left; transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .trust-cell:hover { background: var(--surface); }
+  .trust-cell:hover::before { transform: scaleX(1); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-in, .slot, .q, .phones { animation: none; }
+    .js .bubble { opacity: 1; transform: none; }
+    .js .typing { display: none; }
+  }
+</style>
+
+<script>
+  const fmt = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Count a number up/down smoothly.
+  function tween(el: HTMLElement, to: number) {
+    const from = Number(el.dataset.v ?? to);
+    el.dataset.v = String(to);
+    if (reduce || from === to) { el.textContent = fmt(to); return; }
+    const t0 = performance.now();
+    const step = (t: number) => {
+      const k = Math.min(1, (t - t0) / 350);
+      const e = 1 - Math.pow(1 - k, 3);
+      el.textContent = fmt(from + (to - from) * e);
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  // ── Hero tilt follows the pointer (mouse/trackpad only).
+  const hero = document.querySelector<HTMLElement>('.hero');
+  const phones = document.querySelector<HTMLElement>('.phones');
+  if (hero && phones && !reduce && matchMedia('(pointer: fine)').matches) {
+    hero.addEventListener('pointermove', (e) => {
+      const r = hero.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      phones.style.setProperty('--ry', `${x * 10}deg`);
+      phones.style.setProperty('--rx', `${-y * 8}deg`);
+    });
+    hero.addEventListener('pointerleave', () => { phones.style.setProperty('--ry', '0deg'); phones.style.setProperty('--rx', '0deg'); });
+  }
+
+  // ── Sticky story: which step is in the middle of the screen.
+  const story = document.querySelector<HTMLElement>('.story');
+  if (story && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) story.dataset.step = (e.target as HTMLElement).dataset.i!; });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    story.querySelectorAll('.story-step').forEach((s) => io.observe(s));
+  }
+
+  // ── Pay slider (same maths as the app).
+  const form = document.getElementById('mini-calc') as HTMLFormElement | null;
+  if (form) {
+    const notes = JSON.parse(document.getElementById('mc-notes')!.textContent!);
+    const range = document.getElementById('mc-range') as HTMLInputElement;
+    const rules = [
+      (r: number) => r * 0.3,
+      (r: number) => r * (r < 3000 ? 0.25 : 0.32),
+      (r: number) => Math.max(0, r - 1800),
+      () => 18200 / 26,
+    ];
+    const update = () => {
+      const r = Number(range.value);
+      const m = Number((form.elements.namedItem('m') as RadioNodeList).value);
+      const d = rules[m](r);
+      document.getElementById('mc-rev')!.textContent = fmt(r);
+      document.querySelectorAll('.calc-card').forEach((card) => { card.classList.add('bump'); setTimeout(() => card.classList.remove('bump'), 180); });
+      tween(document.getElementById('mc-driver')!, d);
+      tween(document.getElementById('mc-owner')!, r - d);
+      document.getElementById('mc-note')!.textContent = notes[m];
+      range.style.setProperty('--p', `${((r - 500) / 7500) * 100}%`);
+      (document.getElementById('mc-bar') as HTMLElement).style.width = `${Math.min(100, Math.max(0, (d / r) * 100))}%`;
+    };
+    form.addEventListener('input', update);
+    update();
+  }
+
+  // ── Day timeline: plays itself while in view, until the visitor taps a time.
+  const day = document.querySelector<HTMLElement>('.day');
+  const bar = document.querySelector<HTMLElement>('.day-progress');
+  if (day && bar && !reduce && 'IntersectionObserver' in window) {
+    const radios = [...day.querySelectorAll<HTMLInputElement>('input[name="day"]')];
+    const DUR = 3800;
+    let timer = 0;
+    let stopped = false;
+    const restartBar = () => { bar.classList.remove('run'); void bar.offsetWidth; bar.classList.add('run'); };
+    const tick = () => {
+      const i = radios.findIndex((r) => r.checked);
+      radios[(i + 1) % radios.length].checked = true;
+      restartBar();
+    };
+    const play = () => { if (stopped || timer) return; bar.classList.add('on'); restartBar(); timer = window.setInterval(tick, DUR); };
+    const pause = () => { clearInterval(timer); timer = 0; bar.classList.remove('run'); };
+    new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting ? play() : pause())), { threshold: 0.5 }).observe(day);
+    day.querySelectorAll('label[for^="day-"]').forEach((l) => l.addEventListener('pointerdown', () => { stopped = true; pause(); bar.classList.remove('on'); }));
+    radios.forEach((r) => r.addEventListener('keydown', () => { stopped = true; pause(); bar.classList.remove('on'); }));
+  }
+
+  // ── Offline demo.
+  const box = document.getElementById('offline');
+  if (box) {
+    const data = JSON.parse(document.getElementById('off-data')!.textContent!);
+    const queue = document.getElementById('queue')!;
+    const net = document.getElementById('net')!;
+    let n = 1;
+    const statusEl = document.getElementById('off-status')!;
+    const refresh = () => {
+      const waiting = queue.querySelectorAll('[data-state="phone"]').length;
+      const syncing = queue.querySelectorAll('[data-state="syncing"]').length;
+      statusEl.textContent = waiting ? data.status.waiting.replace('{n}', String(waiting)) : syncing ? data.status.back : data.status.synced;
+      statusEl.style.color = waiting ? '#ffb37a' : '';
+    };
+    const label = (li: HTMLElement, s: 'phone' | 'syncing' | 'synced') => { li.dataset.state = s; li.querySelector('b')!.textContent = data.states[s]; refresh(); };
+    const sync = (li: HTMLElement) => { label(li, 'syncing'); setTimeout(() => label(li, 'synced'), 900); };
+    net.addEventListener('click', () => {
+      const online = box.dataset.online !== 'true';
+      box.dataset.online = String(online);
+      net.setAttribute('aria-checked', String(online));
+      if (online) queue.querySelectorAll<HTMLElement>('[data-state="phone"]').forEach((li, i) => setTimeout(() => sync(li), i * 180));
+    });
+    document.getElementById('add')!.addEventListener('click', () => {
+      const li = document.createElement('li');
+      li.className = 'q';
+      li.innerHTML = '<span></span><b></b>';
+      li.querySelector('span')!.textContent = data.entries[n++ % data.entries.length];
+      queue.prepend(li);
+      while (queue.children.length > 4) queue.lastElementChild!.remove();
+      if (box.dataset.online === 'true') sync(li); else label(li, 'phone');
+    });
+  }
+</script>

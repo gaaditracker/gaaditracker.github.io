@@ -1,0 +1,32 @@
+---
+import Phone from '../Phone.astro';
+interface Props { class?: string }
+---
+<Phone side="driver" time="8:05" class={Astro.props.class}
+  label="Driver app balance: revenue ₹41,820, expenses ₹12,460, advance received ₹2,000, paid to owner ₹27,500. Balance to pay owner ₹3,860.">
+  <div class="s-bar"><div><div class="s-sub">Ravi · since first shift</div><div class="s-title">Balance</div></div></div>
+  <div class="s-body">
+    <div class="s-card" style="background:var(--app-soft);border-color:transparent">
+      <div class="s-label">Balance to pay owner</div>
+      <div class="s-big s-accent">₹3,860</div>
+    </div>
+    <div class="s-card">
+      <div class="s-row"><span class="s-label">Total revenue</span><span>₹41,820</span></div>
+      <div class="s-row"><span class="s-label">Expenses</span><span>− ₹12,460</span></div>
+      <div class="s-hr"></div>
+      <div class="s-row"><span class="s-label">Remaining</span><span style="font-weight:700">₹29,360</span></div>
+      <div class="s-row"><span class="s-label">Advance received</span><span>+ ₹2,000</span></div>
+      <div class="s-row"><span class="s-label">Paid to owner</span><span>− ₹27,500</span></div>
+    </div>
+    <div class="s-label" style="margin-top:2px">Recent</div>
+    <div class="s-card">
+      <div class="s-row"><span>Paid to owner</span><span>₹2,300</span></div>
+      <div class="s-sub">11 Nov · GPay</div>
+    </div>
+    <div class="s-card">
+      <div class="s-row"><span>Advance received</span><span>₹2,000</span></div>
+      <div class="s-sub">4 Nov · Tyre puncture, Tambaram</div>
+    </div>
+  </div>
+  <div class="s-nav"><span>Shift</span><span class="on">Balance</span><span>History</span></div>
+</Phone>

@@ -1,0 +1,41 @@
+---
+/** A WhatsApp-style chat and a notebook page, drawn in HTML. No real brand chrome. */
+interface Props { lang?: 'en' | 'hi' }
+const hi = Astro.props.lang === 'hi';
+---
+<div class="grid items-start gap-6 sm:grid-cols-2">
+  <div class="rounded-2xl bg-[#e5e5ea] p-4 dark:bg-[#1c1c1e]" role="img"
+       aria-label={hi ? 'चैट: मालिक रात 10 बजे पूछता है आज कितना हुआ। ड्राइवर कहता है 3200 के आसपास, CNG 1100, कल हिसाब करेंगे।' : 'Chat: the owner asks at 10 pm how much was made today. The driver replies around 3200, CNG 1100, will settle tomorrow.'}>
+    <div aria-hidden="true" class="flex flex-col gap-2 text-[0.9375rem] leading-snug text-[#1d1d1f]">
+      <p class="mb-1 text-[0.75rem] font-semibold text-[#6e6e73] dark:text-[#a1a1a6]">Ravi · TN 23 TK 4521</p>
+      <div class="ml-auto max-w-[80%] rounded-xl rounded-tr-sm bg-[#d9fdd3] px-3 py-2">Ravi kitna hua aaj?<span class="ml-2 align-bottom text-[0.6875rem] text-[#5d6b58]">10:04 pm</span></div>
+      <div class="max-w-[80%] rounded-xl rounded-tl-sm bg-white px-3 py-2">Sir 3200 ke aas paas<span class="ml-2 align-bottom text-[0.6875rem] text-[#86868b]">10:31 pm</span></div>
+      <div class="max-w-[80%] rounded-xl rounded-tl-sm bg-white px-3 py-2">CNG 1100 dala. Kal hisab karte hai<span class="ml-2 align-bottom text-[0.6875rem] text-[#86868b]">10:31 pm</span></div>
+      <div class="ml-auto max-w-[80%] rounded-xl rounded-tr-sm bg-[#d9fdd3] px-3 py-2">Km kitna?<span class="ml-2 align-bottom text-[0.6875rem] text-[#5d6b58]">10:33 pm</span></div>
+      <p class="-mt-1 text-right text-[0.75rem] text-[#6e6e73] dark:text-[#a1a1a6]">Seen 10:33 pm · no reply</p>
+    </div>
+  </div>
+  <div class="notebook relative rounded-sm p-5 pl-12 text-[#26364f] sm:mt-10" role="img"
+       aria-label={hi ? 'कॉपी का पन्ना: तारीख, किलोमीटर और रकम हाथ से लिखे, कुछ कटे हुए।' : 'Notebook page: dates, km and amounts written by hand, some crossed out.'}>
+    <div aria-hidden="true" class=" text-[0.9375rem] leading-[2rem]">
+      <p class="font-semibold">Nov — 4521</p>
+      <p>9/11 &nbsp; 47,860 → 48,04? &nbsp; 3,100</p>
+      <p>10/11 &nbsp; <s>48,040</s> 48,051 → 48,210</p>
+      <p>CNG 1,100 + 600 (bill?)</p>
+      <p>adv 2000 given ✓ &nbsp; <span class="text-[#b42318]">paid?</span></p>
+      <p class="text-[#6e6e73]">ask Ravi for Tues</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .notebook {
+    background-color: #fffdf6;
+    background-image:
+      linear-gradient(90deg, transparent 2.25rem, #f2a7a7 2.25rem, #f2a7a7 2.35rem, transparent 2.35rem),
+      repeating-linear-gradient(transparent 0 calc(2rem - 1px), #c9daf0 calc(2rem - 1px) 2rem);
+    background-position: 0 1.25rem;
+    transform: rotate(1.2deg);
+    box-shadow: 0 18px 36px -24px rgb(31 25 21 / 0.5);
+  }
+</style>

@@ -1,0 +1,10 @@
+---
+import PlayBadge from './PlayBadge.astro';
+import type { Lang } from '../i18n/ui';
+interface Props { campaign: string; lang?: Lang; class?: string }
+const { campaign, lang = 'en', class: cls = '' } = Astro.props;
+---
+<div class={`flex flex-wrap gap-x-6 gap-y-4 ${cls}`}>
+  <PlayBadge app="owner" campaign={campaign} lang={lang} />
+  <PlayBadge app="driver" campaign={campaign} lang={lang} />
+</div>

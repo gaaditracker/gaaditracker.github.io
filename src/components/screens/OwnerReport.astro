@@ -1,0 +1,36 @@
+---
+import Phone from '../Phone.astro';
+interface Props { class?: string; truck?: boolean }
+const { truck = false } = Astro.props;
+const rows = truck
+  ? [['Revenue', '₹1,84,500'], ['Diesel', '− ₹71,240'], ['FASTag + expenses', '− ₹18,960'], ['Driver cost', '− ₹28,000']]
+  : [['Revenue', '₹96,340'], ['CNG', '− ₹21,780'], ['Expenses', '− ₹6,150'], ['Driver cost', '− ₹28,902']];
+const profit = truck ? '₹66,300' : '₹39,508';
+---
+<Phone side="owner" time="9:40" class={Astro.props.class}
+  label={truck ? 'Owner report for a lorry in October: revenue ₹1,84,500, profit ₹66,300, fuel average 4.1 km per litre.' : 'Owner report for one cab in October: revenue ₹96,340, profit ₹39,508.'}>
+  <div class="s-bar"><div><div class="s-sub">{truck ? 'TN 07 AV 2290' : 'TN 23 TK 4521'} · October</div><div class="s-title">Report</div></div><span class="s-chip">Export</span></div>
+  <div class="s-body">
+    <div class="s-pills"><span class="s-pill on">Vehicle</span><span class="s-pill">Driver</span><span class="s-pill">Platform</span><span class="s-pill">Dates</span></div>
+    <div class="s-card">
+      {rows.map(([k, v]) => <div class="s-row"><span class="s-label">{k}</span><span>{v}</span></div>)}
+      <div class="s-hr"></div>
+      <div class="s-row"><span style="font-weight:700">Profit</span><span class="s-mid s-green">{profit}</span></div>
+    </div>
+    {truck ? (
+      <div class="s-card">
+        <div class="s-row"><span class="s-label">Fuel average</span><span class="s-mid">4.1 km/l</span></div>
+        <div class="s-row"><span class="s-label">Km driven</span><span>7,420 km</span></div>
+        <div class="s-row"><span class="s-label">Diesel filled</span><span>1,810 l</span></div>
+      </div>
+    ) : (
+      <div class="s-card">
+        <div class="s-row"><span class="s-label">Uber</span><span>₹61,200</span></div>
+        <div class="s-row"><span class="s-label">Ola</span><span>₹22,940</span></div>
+        <div class="s-row"><span class="s-label">Local trips</span><span>₹12,200</span></div>
+      </div>
+    )}
+    <div class="s-btn ghost">Export CSV or PDF</div>
+  </div>
+  <div class="s-nav"><span>Home</span><span>Vehicles</span><span>Drivers</span><span class="on">Reports</span></div>
+</Phone>

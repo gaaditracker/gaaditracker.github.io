@@ -1,0 +1,96 @@
+---
+/**
+ * The page's one moment of motion: an odometer rolling from the shift's
+ * start reading to its end reading. Pure CSS. With reduced motion it simply
+ * shows the end reading.
+ */
+interface Props { from?: number; to?: number; plate?: string; caption: string; label: string }
+const { from = 48210, to = 48392, plate = 'TN 23 TK 4521', caption, label } = Astro.props;
+
+const b = String(to).padStart(6, '0').split('').map(Number);
+// Build a strip per wheel. A wheel turns once for every carry from the wheel to its right.
+const cols = b.map((end, i) => {
+  const place = 10 ** (b.length - 1 - i);
+  const turns = Math.floor(to / place) - Math.floor(from / place); // digit steps this wheel moves
+  const steps = Math.min(turns, 22); // cap so the ones wheel doesn't spin 182 times
+  const start = (end - steps + 100) % 10;
+  const seq = Array.from({ length: steps + 1 }, (_, k) => (start + k) % 10);
+  return { seq, end: steps, wheel: i };
+});
+---
+<figure class="odo inline-block" aria-label={label} role="img">
+  <div aria-hidden="true">
+    <div class="flex items-center gap-3 text-[0.75rem] font-semibold text-muted">
+      <span class="eyebrow !text-[0.6875rem]">Odometer</span><span class="num">{plate}</span>
+    </div>
+    <div class="mt-2 flex items-stretch gap-[3px] rounded-xl bg-[#1d1d1f] p-[6px] shadow-[inset_0_2px_6px_rgb(0_0_0/0.6)]">
+      {cols.map((c, i) => (
+        <span class:list={['wheel', i === cols.length - 1 && 'last']} style={`--end:${c.end};--d:${(cols.length - i) * 0.12}s`}>
+          <span class="strip">{c.seq.map((d) => <span>{d}</span>)}</span>
+        </span>
+      ))}
+      <span class="self-end px-1.5 pb-1 text-[0.75rem] font-semibold text-[#a1a1a6]">km</span>
+    </div>
+  </div>
+  <figcaption class="mt-3 text-[0.9375rem] text-muted"><Fragment set:html={caption} /></figcaption>
+</figure>
+
+<style>
+  .wheel {
+    --h: 2.6rem;
+    position: relative;
+    display: block;
+    width: 1.85rem;
+    height: var(--h);
+    overflow: hidden;
+    border-radius: 5px;
+    background: linear-gradient(#1d1d1f, #2c2c2e 50%, #1d1d1f);
+    color: #f5f5f7;
+    font: 700 1.75rem/var(--h) 'Google Sans', sans-serif;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+  .wheel.last {
+    background: linear-gradient(#ffd8a8, #ffe8cc 50%, #ffd8a8);
+    color: #1d1d1f;
+  }
+  .wheel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgb(0 0 0 / 0.35), transparent 30%, transparent 70%, rgb(0 0 0 / 0.35));
+    pointer-events: none;
+  }
+  .strip {
+    display: flex;
+    flex-direction: column;
+    transform: translateY(calc(var(--end) * var(--h) * -1));
+    animation: roll 2.4s cubic-bezier(0.25, 0.8, 0.25, 1) var(--d) backwards;
+  }
+  .strip > span {
+    height: var(--h);
+  }
+  /* Rolls only once in view (class added below). Without JS it simply shows the end reading. */
+  .odo:not(.run) .strip {
+    animation: none;
+  }
+  @keyframes roll {
+    from { transform: translateY(0); }
+  }
+  @media (min-width: 640px) {
+    .wheel { --h: 3rem; width: 2.15rem; font-size: 2rem; }
+  }
+</style>
+
+<script>
+  const odo = document.querySelector('.odo');
+  if (odo && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        odo.classList.add('run');
+        io.disconnect();
+      }
+    }, { threshold: 0.6 });
+    io.observe(odo);
+  }
+</script>

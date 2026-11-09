@@ -1,0 +1,133 @@
+---
+import Base from '../layouts/Base.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+import PlayBadges from './PlayBadges.astro';
+import Placeholder from './Placeholder.astro';
+import Faq from './Faq.astro';
+import Download from './Download.astro';
+import DriverAddEarning from './screens/DriverAddEarning.astro';
+import OwnerReport from './screens/OwnerReport.astro';
+import DriverBalance from './screens/DriverBalance.astro';
+import { vehicles, vehiclePath, type VehicleKey } from '../i18n/vehicles';
+import { breadcrumbs, faqPage } from '../data/schema';
+import type { Lang } from '../i18n/ui';
+
+interface Props { kind: VehicleKey; lang: Lang }
+const { kind, lang } = Astro.props;
+const c = vehicles[lang][kind];
+const hi = lang === 'hi';
+const path = hi ? `/hi${vehiclePath[kind]}` : vehiclePath[kind];
+const trail = [{ name: hi ? 'होम' : 'Home', path: hi ? '/hi' : '/' }, { name: c.crumb, path }];
+const campaign = `${kind}_page${hi ? '_hi' : ''}`;
+const quarters = hi
+  ? [['अप्रैल–जून', '1 अप्रैल'], ['जुलाई–सितंबर', '1 जुलाई'], ['अक्टूबर–दिसंबर', '1 अक्टूबर'], ['जनवरी–मार्च', '1 जनवरी']]
+  : [['April–June', '1 April'], ['July–September', '1 July'], ['October–December', '1 October'], ['January–March', '1 January']];
+const resultRows = c.example.rows;
+---
+<Base title={c.meta.title} description={c.meta.description} path={path} lang={lang} schema={[breadcrumbs(trail), faqPage(c.faq)]}>
+  <div class="wrap pt-2"><Breadcrumbs trail={trail} /></div>
+
+  <section class="wrap grid items-center gap-12 pb-12 pt-6 lg:grid-cols-[1.3fr_1fr]">
+    <div>
+      <p class="eyebrow">{c.eyebrow}</p>
+      <h1 class="mt-4 max-w-[20ch] text-[2.25rem] sm:text-[3rem] lg:text-[3.4rem]">{c.h1}</h1>
+      <p class="lede mt-6">{c.answer}</p>
+      <PlayBadges class="mt-8" campaign={campaign} lang={lang} />
+    </div>
+    <div class="flex justify-center lg:justify-end">
+      <Placeholder label={`Real screenshot: Add earning (${kind})`}><DriverAddEarning kind={kind === 'taxi' ? 'cab' : kind} /></Placeholder>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <Placeholder label="Photo needed" class="flex aspect-[21/9] min-h-[180px] items-end rounded-2xl bg-[linear-gradient(135deg,var(--surface),var(--surface-2))] p-5">
+      <p class="max-w-md text-[0.9375rem] text-muted">{c.photo}</p>
+    </Placeholder>
+  </div>
+
+  <section class="wrap grid gap-8 py-16 md:grid-cols-[1fr_1.3fr] md:gap-16 md:py-24" aria-labelledby="problem-h">
+    <h2 id="problem-h" class="text-[2rem] sm:text-[2.5rem]">{c.problem.h2}</h2>
+    <ol class="stagger grid gap-5">
+      {c.problem.items.map((p, i) => (
+        <li class="grid grid-cols-[2.5rem_1fr] border-b border-line pb-5">
+          <span class="num font-semibold text-orange-text">{String(i + 1).padStart(2, '0')}</span><span>{p}</span>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="border-y border-line bg-surface py-16 md:py-24" aria-labelledby="how-h">
+    <div class="wrap">
+      <h2 id="how-h" class="max-w-2xl text-[2rem] sm:text-[2.5rem]">{c.how.h2}</h2>
+      <dl class="stagger mt-12 grid gap-x-10 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
+        {c.how.items.map(([t, d]) => (
+          <div class="border-t-2 border-ink pt-3">
+            <dt class="font-semibold">{t}</dt>
+            <dd class="mt-1.5 text-[0.9875rem] text-muted">{d}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="wrap grid items-center gap-12 py-16 md:grid-cols-[1.2fr_1fr] md:py-24" aria-labelledby="ex-h">
+    <div>
+      <h2 id="ex-h" class="text-[2rem] sm:text-[2.5rem]">{c.example.h2}</h2>
+      <p class="mt-3 max-w-lg text-muted">{c.example.p}</p>
+      <dl class="num mt-8 max-w-md">
+        {resultRows.map(([k, v]) => (
+          <div class:list={['flex justify-between gap-4 border-b border-dashed border-line py-2.5', !v.startsWith('−') && /Revenue|कुल|Freight|भाड़ा/.test(k) && 'font-semibold']}>
+            <dt class="text-muted">{k}</dt><dd>{v}</dd>
+          </div>
+        ))}
+        <div class="flex items-baseline justify-between gap-4 pt-4">
+          <dt class="font-semibold">{c.example.total[0]}</dt>
+          <dd class="font-display text-[2.25rem] font-semibold leading-none text-orange-text">{c.example.total[1]}</dd>
+        </div>
+      </dl>
+      <p class="mt-5 max-w-md text-[0.875rem] text-muted">{c.example.note}</p>
+    </div>
+    <div class="flex justify-center md:justify-end">
+      {kind === 'auto'
+        ? <Placeholder label="Real screenshot: Driver balance"><DriverBalance /></Placeholder>
+        : kind === 'truck'
+          ? <Placeholder label="Real screenshot: Lorry report"><OwnerReport truck /></Placeholder>
+          : <Placeholder label="Real screenshot: Cab report"><OwnerReport /></Placeholder>}
+    </div>
+  </section>
+
+  {kind === 'truck' && (
+    <section class="wrap pb-16" aria-labelledby="tax-h">
+      <div class="grid gap-8 md:grid-cols-[1fr_1.3fr] md:gap-16">
+        <div>
+          <h2 id="tax-h" class="text-[1.75rem] sm:text-[2.25rem]">{hi ? 'रोड टैक्स की तिमाहियां' : 'Road tax quarters'}</h2>
+          <p class="mt-3 text-muted">{hi
+            ? 'जिन राज्यों में माल वाहन का टैक्स तिमाही में लगता है, वहां यह तिमाही की शुरुआत में पहले से भरा जाता है। छूट की अवधि अपने राज्य के परिवहन विभाग से पक्की करें।'
+            : 'In states that charge goods vehicles quarterly, tax is paid in advance at the start of the quarter. Confirm the grace period with your state transport department.'}</p>
+          <p class="mt-4"><a class="link" href="/blog/road-tax-due-dates-commercial-vehicles-india">{hi ? 'पूरी गाइड पढ़ें (English)' : 'Read the full guide'}</a></p>
+        </div>
+        <table class="data-table">
+          <thead><tr><th scope="col">{hi ? 'तिमाही' : 'Quarter'}</th><th scope="col">{hi ? 'शुरुआत, टैक्स बाकी' : 'Starts, tax due'}</th></tr></thead>
+          <tbody>{quarters.map(([q, d]) => <tr><th scope="row" class="font-semibold">{q}</th><td class="num">{d}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+  )}
+
+  <section class="wrap grid gap-8 py-12 md:grid-cols-[1fr_2fr] md:gap-16" aria-labelledby="faq-h">
+    <h2 id="faq-h" class="text-[2rem] sm:text-[2.5rem]">{hi ? 'सवाल' : 'Questions'}</h2>
+    <Faq items={c.faq} />
+  </section>
+
+  <section class="wrap py-12" aria-labelledby="rel-h">
+    <h2 id="rel-h" class="text-[1.5rem]">{c.related.h2}</h2>
+    <ul class="stagger mt-4 grid gap-x-10 sm:grid-cols-2">
+      {c.related.links.map(([href, label]) => (
+        <li class="border-b border-line"><a href={href} class="flex min-h-[52px] items-center justify-between gap-4 font-semibold no-underline hover:text-orange-text">{label}<span class="arr" aria-hidden="true">→</span></a></li>
+      ))}
+    </ul>
+  </section>
+
+  <Download lang={lang} campaign={campaign} />
+</Base>
+

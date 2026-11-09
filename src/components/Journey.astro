@@ -1,0 +1,111 @@
+---
+/** A scroll-driven road map: a road fills as you scroll, a marker travels down it,
+    and each numbered stop lights up as the marker reaches it. */
+export type JourneyGroup = { phase: string; stops: [string, string][] };
+interface Props { groups: JourneyGroup[]; end?: string; tone?: 'orange' | 'indigo'; icon?: 'car' | 'eye'; class?: string }
+const { groups, end, tone = 'orange', icon = 'car', class: cls = '' } = Astro.props;
+let n = 0;
+---
+<div class:list={['journey', tone === 'indigo' && 'j-indigo', cls]} data-journey>
+  <div class="j-road" aria-hidden="true">
+    <div class="j-fill"></div>
+    <div class="j-car">
+      {icon === 'car'
+        ? <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="M4.5 11.2 6.2 6.6A2.4 2.4 0 0 1 8.4 5h7.2a2.4 2.4 0 0 1 2.2 1.6l1.7 4.6V17a1 1 0 0 1-1 1h-1.2a1 1 0 0 1-1-1v-1H7.7v1a1 1 0 0 1-1 1H5.5a1 1 0 0 1-1-1zM7 10.6h10l-1.1-3.2a.9.9 0 0 0-.85-.6h-6.1a.9.9 0 0 0-.85.6zM7.6 14.3a1.1 1.1 0 1 0 0-2.2 1.1 1.1 0 0 0 0 2.2m8.8 0a1.1 1.1 0 1 0 0-2.2 1.1 1.1 0 0 0 0 2.2"/></svg>
+        : <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8" fill="currentColor"/></svg>}
+    </div>
+  </div>
+  <ol class="j-list">
+    {groups.map((g) => (
+      <>
+        <li class="j-phase" data-j><span>{g.phase}</span></li>
+        {g.stops.map(([t, d]) => {
+          n++;
+          return (
+            <li class:list={['j-stop', n % 2 ? 'j-l' : 'j-r']} data-j>
+              <span class="j-dot" aria-hidden="true">{String(n).padStart(2, '0')}</span>
+              <div class="j-card">
+                <h3 class="text-[1.0625rem] font-semibold">{t}</h3>
+                <p class="mt-1.5 text-[0.9875rem] text-muted">{d}</p>
+              </div>
+            </li>
+          );
+        })}
+      </>
+    ))}
+    {end && <li class="j-phase j-end" data-j><span>{end}</span></li>}
+  </ol>
+</div>
+
+<style is:global>
+  /* ── Journey: a road with stops. Mobile: road on the left. Desktop: road in the middle, stops alternate. */
+  .journey { position: relative; --x: 19px; --p: 0; --ja: var(--orange); --ja-text: var(--orange-text); --ja-light: #ffb37a; --ja-glow: var(--ja-glow); --j-card: var(--surface); }
+  .journey.j-indigo { --ja: var(--indigo); --ja-text: var(--indigo-text); --ja-light: #a5b4fc; --ja-glow: rgb(79 70 229 / 0.6); --j-card: var(--bg); }
+  .j-list { list-style: none; margin: 0; padding: 0; position: relative; }
+  .j-road { position: absolute; top: 6px; bottom: 6px; left: var(--x); width: 12px; transform: translateX(-50%); border-radius: 999px; background: var(--surface-2); overflow: visible; }
+  .j-road::before { content: ''; position: absolute; inset: 6px auto 6px 50%; width: 2px; transform: translateX(-50%); background: repeating-linear-gradient(to bottom, var(--bg) 0 9px, transparent 9px 20px); z-index: 1; }
+  .j-fill { position: absolute; inset: 0 0 auto; height: calc(var(--p) * 100%); border-radius: inherit; background: linear-gradient(to bottom, var(--ja-light), var(--ja)); }
+  .j-car { position: absolute; z-index: 2; left: 50%; top: calc(var(--p) * 100%); width: 34px; height: 34px; margin: -17px 0 0 -17px; display: grid; place-items: center; border-radius: 50%; background: var(--ja); color: #fff; box-shadow: 0 0 0 5px color-mix(in srgb, var(--ja) 22%, transparent), 0 8px 18px -6px var(--ja-glow); }
+  .j-car::after { content: ''; position: absolute; inset: -5px; border-radius: inherit; border: 2px solid var(--ja); opacity: 0; animation: j-ping 2.2s ease-out infinite; }
+  @keyframes j-ping { 0% { transform: scale(0.8); opacity: 0.7; } 100% { transform: scale(1.8); opacity: 0; } }
+
+  .j-phase { position: relative; padding: 0 0 18px calc(var(--x) + 30px); }
+  .j-phase span { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); transition: color 0.4s, border-color 0.4s, background-color 0.4s; }
+  .j-phase::before { content: ''; position: absolute; left: var(--x); top: 11px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: var(--line); z-index: 3; transition: background-color 0.4s; }
+  .j-phase.in span { color: var(--ja-text); border-color: color-mix(in srgb, var(--ja) 45%, transparent); background: color-mix(in srgb, var(--ja) 8%, var(--bg)); }
+  .j-phase.in::before { background: var(--ja); }
+  .j-end { padding-bottom: 0; margin-top: 8px; }
+
+  .j-stop { position: relative; padding: 0 0 26px calc(var(--x) + 30px); }
+  .j-dot { position: absolute; z-index: 3; left: var(--x); top: 16px; width: 32px; height: 32px; margin-left: -16px; display: grid; place-items: center; border-radius: 50%; background: var(--bg); border: 2px solid var(--line); font-size: 0.6875rem; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; transition: background-color 0.35s, border-color 0.35s, color 0.35s, transform 0.5s cubic-bezier(0.3, 1.6, 0.4, 1); }
+  .j-stop.in .j-dot { background: var(--ja); border-color: var(--ja); color: #fff; transform: scale(1.08); }
+  .j-card { position: relative; padding: 18px 20px; border-radius: 20px; background: var(--j-card); border: 1px solid transparent; transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), border-color 0.3s, box-shadow 0.3s, background-color 0.3s; }
+  .j-card::before { content: ''; position: absolute; top: 28px; left: -7px; width: 14px; height: 14px; background: inherit; transform: rotate(45deg); border-radius: 3px; }
+  @media (hover: hover) { .j-card:hover { transform: translateY(-3px); background: var(--bg); border-color: var(--line); box-shadow: 0 18px 40px -24px rgb(0 0 0 / 0.35); } .j-card:hover::before { display: none; } }
+
+  /* Before the road reaches a stop, it waits dimmed (only when JS runs, so nothing is hidden without it). */
+  .js .j-stop:not(.in) .j-card { opacity: 0.35; transform: translateX(14px); }
+
+  @media (min-width: 1024px) {
+    .journey { --x: 50%; }
+    .j-phase { padding: 0 0 22px; text-align: center; }
+    .j-phase span { position: relative; z-index: 4; }
+    .j-phase::before { display: none; }
+    .j-stop { width: 50%; padding: 0 0 30px; }
+    .j-stop.j-l { padding-right: 44px; text-align: right; }
+    .j-stop.j-r { margin-left: 50%; padding-left: 44px; }
+    .j-stop.j-l .j-dot { left: auto; right: 0; margin: 0 -16px 0 0; }
+    .j-stop.j-r .j-dot { left: 0; }
+    .j-stop.j-l .j-card::before { left: auto; right: -7px; }
+    .j-stop:not(:first-of-type) { margin-top: -42px; }
+    .j-phase + .j-stop { margin-top: 0; }
+    .js .j-stop.j-l:not(.in) .j-card { transform: translateX(-14px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .j-car::after { animation: none; }
+    .j-card, .j-dot { transition: none; }
+    .js .j-stop:not(.in) .j-card { opacity: 1; transform: none; }
+  }
+</style>
+
+<script>
+  // The road fills and the car drives down as you scroll; each stop lights up as the car reaches it.
+  document.querySelectorAll<HTMLElement>('[data-journey]').forEach((journey) => {
+    const items = [...journey.querySelectorAll<HTMLElement>('[data-j]')];
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const r = journey.getBoundingClientRect();
+      const line = innerHeight * 0.62;
+      const p = reduce ? 1 : Math.min(1, Math.max(0, (line - r.top) / r.height));
+      journey.style.setProperty('--p', p.toFixed(4));
+      items.forEach((el) => el.classList.toggle('in', reduce || el.getBoundingClientRect().top + 22 <= line));
+    };
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll);
+    update();
+  });
+</script>

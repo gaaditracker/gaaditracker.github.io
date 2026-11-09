@@ -1,0 +1,11 @@
+---
+import '../styles/screens.css';
+interface Props { side?: 'owner' | 'driver'; label: string; class?: string; time?: string }
+const { side = 'driver', label, class: cls = '', time = '7:42' } = Astro.props;
+---
+<div class:list={['phone', side === 'owner' && 'owner', cls]} role="img" aria-label={label}>
+  <div aria-hidden="true" class="contents">
+    <div class="s-status"><span>{time}</span><span>4G <i></i></span></div>
+    <slot />
+  </div>
+</div>

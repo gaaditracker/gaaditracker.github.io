@@ -1,0 +1,60 @@
+---
+/**
+ * PRICING IS A PLACEHOLDER. Every price, plan name and limit below is marked
+ * "TBD" on purpose. Fill them in from PLACEHOLDERS.md before launch, and add
+ * `offers` to the MobileApplication schema in src/data/schema.ts.
+ */
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Placeholder from '../components/Placeholder.astro';
+import Download from '../components/Download.astro';
+import { breadcrumbs } from '../data/schema';
+const path = '/pricing';
+
+const plans = [
+  { name: 'Plan name TBD', for: 'For 1–3 vehicles', price: '₹ TBD', per: 'per month', featured: false },
+  { name: 'Plan name TBD', for: 'For 4–15 vehicles', price: '₹ TBD', per: 'per month', featured: true },
+  { name: 'Plan name TBD', for: 'For 16–50 vehicles', price: '₹ TBD', per: 'per month', featured: false },
+];
+const included = [
+  'Owner app and a Driver app login for each driver',
+  'Odometer checks on every shift',
+  'All four driver pay models',
+  'Approvals for driver edits and past trips',
+  'Service and road tax reminders',
+  'Reports with CSV and PDF export',
+  'Offline entry for drivers',
+];
+---
+<Base title="Pricing | Gaadi Tracker" description="Gaadi Tracker pricing for taxi, auto and truck fleet owners in India. Plans and monthly prices for the Owner and Driver apps." path={path}
+  schema={[breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Pricing', path }])]}>
+  <PageIntro crumb="Pricing" path={path} eyebrow="Pricing" title="Gaadi Tracker pricing"
+    answer="Prices are being finalised. This page will list each plan, what it costs per month and how many vehicles it covers. Until then, write to us from the contact page and we’ll tell you what applies to your fleet." />
+
+  <section class="wrap" aria-label="Plans">
+    <Placeholder label="Pricing not final: fill in from PLACEHOLDERS.md" class="rounded-2xl">
+      <div class="grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3">
+        {plans.map((p) => (
+          <div class:list={['flex flex-col gap-4 bg-bg p-6 sm:p-8', p.featured && 'bg-peach-soft']}>
+            <div>
+              <h2 class="!font-sans text-[1.125rem] !font-bold !tracking-normal">{p.name}</h2>
+              <p class="text-[0.9375rem] text-muted">{p.for}</p>
+            </div>
+            <p><span class="num font-display text-[2.5rem] font-semibold">{p.price}</span> <span class="text-muted">{p.per}</span></p>
+            <a href="#download" class="btn mt-auto" class:list={[p.featured ? 'btn-primary' : 'btn-ghost']}>Get the app</a>
+          </div>
+        ))}
+      </div>
+    </Placeholder>
+    <p class="mt-6 max-w-2xl text-[0.9375rem] text-muted">Free trial length, annual discount and payment methods: to be confirmed.</p>
+  </section>
+
+  <section class="wrap grid gap-8 py-16 md:grid-cols-[1fr_1.4fr] md:gap-16" aria-labelledby="inc-h">
+    <div><h2 id="inc-h" class="text-[1.75rem] sm:text-[2.25rem]">What the apps include</h2><p class="mt-3 text-[0.9375rem] text-muted">Which of these each plan includes will be confirmed with the prices.</p></div>
+    <ul class="grid gap-3 sm:grid-cols-2">
+      {included.map((i) => <li class="flex gap-3 border-b border-line pb-3"><span aria-hidden="true" class="text-orange-text">✓</span>{i}</li>)}
+    </ul>
+  </section>
+
+  <Download campaign="pricing" />
+</Base>

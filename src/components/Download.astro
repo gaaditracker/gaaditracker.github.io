@@ -1,0 +1,20 @@
+---
+import PlayBadges from './PlayBadges.astro';
+import type { Lang } from '../i18n/ui';
+interface Props { lang?: Lang; campaign: string; title?: string; text?: string }
+const hi = Astro.props.lang === 'hi';
+const { campaign, lang = 'en' } = Astro.props;
+const title = Astro.props.title ?? (hi ? 'आज रात फ़ोन में डालिए। ड्राइवर को दूसरा ऐप दीजिए।' : 'Put it on your phone tonight. Give your driver the other app.');
+const text = Astro.props.text ?? (hi
+  ? 'आप Gaadi Tracker Owner इंस्टॉल करें, गाड़ी और ड्राइवर जोड़ें, और हर ड्राइवर का लॉगिन बनाएं। ड्राइवर अपने फ़ोन पर Gaadi Tracker Driver इंस्टॉल करके उसी लॉगिन से शुरू करे।'
+  : 'You install Gaadi Tracker Owner, add your vehicles and drivers, and create a login for each driver. Each driver installs Gaadi Tracker Driver on their own phone and signs in with that login.');
+---
+<section id="download" class="wrap mt-24 scroll-mt-8" aria-labelledby="download-h">
+  <div class="grid gap-8 rounded-[2rem] border border-transparent bg-[var(--deep)] px-6 py-12 text-[#ffffff] dark:border-line sm:px-10 md:grid-cols-[1.3fr_1fr] md:items-end md:py-14">
+    <div>
+      <h2 id="download-h" class="text-[2.25rem] sm:text-[3.25rem]">{title}</h2>
+      <p class="mt-4 max-w-xl opacity-80">{text}</p>
+    </div>
+    <div class="on-dark"><PlayBadges campaign={campaign} lang={lang} /></div>
+  </div>
+</section>

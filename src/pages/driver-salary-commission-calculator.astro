@@ -1,0 +1,217 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Faq from '../components/Faq.astro';
+import Download from '../components/Download.astro';
+import { breadcrumbs, faqPage } from '../data/schema';
+import { inr, site } from '../data/site';
+
+const path = '/driver-salary-commission-calculator';
+
+// Same maths as the app (lib/domain/calc.dart): one rule per shift, slab applies one rate to the whole day.
+const d = { rev: 3450, days: 26, pct: 30, slab: 3000, low: 25, high: 32, rent: 1800, salary: 18200 };
+const cost = {
+  percentage: (r: number) => (r * d.pct) / 100,
+  slab: (r: number) => (r * (r < d.slab ? d.low : d.high)) / 100,
+  rent: (r: number) => Math.max(0, r - d.rent),
+  salary: () => d.salary / 26,
+};
+const models = [
+  { id: 'percentage', name: 'Percentage' },
+  { id: 'slab', name: 'Slab' },
+  { id: 'rent', name: 'Daily rent' },
+  { id: 'salary', name: 'Monthly salary' },
+] as const;
+
+const faqs = [
+  {
+    q: 'How do I calculate a driver’s commission on Uber or Ola?',
+    a: 'Take the day’s revenue the car earned, the amount the platform pays out for that driver’s trips, and multiply it by the agreed percentage. At 30% on ₹3,450, the driver’s commission is ₹1,035 and ₹2,415 stays with the owner before fuel and other expenses. Agree in advance whether fuel comes out before or after the split.',
+  },
+  {
+    q: 'Is daily rent or commission better for the owner?',
+    a: 'Rent gives the owner a fixed, predictable amount and puts the risk of a slow day on the driver. Commission shares both good and bad days. On a ₹3,450 day, ₹1,800 rent leaves the owner ₹1,800, while 30% commission leaves the owner ₹2,415. On a ₹2,200 day the same rent still pays ₹1,800, but 30% commission leaves ₹1,540.',
+  },
+  {
+    q: 'Why is salary divided by 26 days?',
+    a: 'A month has about 30 days, and drivers usually get around four days off, leaving roughly 26 working days. Gaadi Tracker divides the monthly salary by 26 to get a cost per shift. A ₹18,200 salary becomes ₹700 per shift, so a salaried driver shows up in the same per-day reports as a commission or rent driver.',
+  },
+];
+
+const howTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to calculate a driver’s pay for one day',
+  description: 'Work out what a commercial vehicle driver earns for a day under percentage, slab, daily rent or monthly salary pay.',
+  step: [
+    { '@type': 'HowToStep', name: 'Add up the day’s revenue', text: 'Add every platform payout and local trip for the shift. Example: ₹3,450.' },
+    { '@type': 'HowToStep', name: 'Pick the pay model', text: 'Percentage, slab, daily rent or monthly salary, as agreed with the driver.' },
+    { '@type': 'HowToStep', name: 'Apply the rule', text: 'Percentage: revenue × %. Slab: revenue × low % if below the slab, else × high %. Rent: revenue − rent. Salary: monthly salary ÷ 26.' },
+    { '@type': 'HowToStep', name: 'Find what the owner keeps', text: 'Revenue minus the driver’s pay, before fuel and other expenses.' },
+  ],
+};
+const input = 'mt-1.5 block w-full min-h-[48px] rounded-xl border-[1.5px] border-line bg-bg px-3.5 py-2 text-[1.125rem] font-semibold num focus:border-orange focus:outline-none';
+---
+<Base
+  title="Driver Commission & Salary Calculator | Gaadi Tracker"
+  description="Free driver commission calculator for cab, auto and truck owners in India. Compare percentage, slab, daily rent and monthly salary on the same day’s earnings."
+  path={path}
+  schema={[breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Driver pay calculator', path }]), howTo, faqPage(faqs)]}>
+  <PageIntro crumb="Driver pay calculator" path={path} eyebrow="Driver pay and hisab" title="Driver commission and salary calculator"
+    answer="Work out what a driver earns and what you keep for one day, under the four pay models Gaadi Tracker supports: percentage, slab, daily rent and monthly salary. Type your own numbers; the calculator uses the same maths as the app." />
+
+  <section class="wrap" aria-labelledby="calc-h">
+    <h2 id="calc-h" class="sr-only">Calculator</h2>
+    <form id="calc" class="grid gap-10 rounded-[1.5rem] border border-line p-5 sm:p-8 lg:grid-cols-[1.1fr_1fr]" onsubmit="return false">
+      <div class="grid content-start gap-6">
+        <div class="grid gap-5 sm:grid-cols-2">
+          <label class="font-semibold">Revenue for the day (₹)<input class={input} name="rev" type="number" inputmode="numeric" min="0" step="10" value={d.rev} /></label>
+          <label class="font-semibold">Working days in the month<input class={input} name="days" type="number" inputmode="numeric" min="1" max="31" value={d.days} /></label>
+        </div>
+
+        <fieldset>
+          <legend class="font-semibold">Pay model</legend>
+          <div class="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {models.map((m, i) => (
+              <label class="model-opt flex min-h-[48px] cursor-pointer items-center justify-center rounded-xl border-[1.5px] border-line px-3 text-center text-[0.9375rem] font-semibold">
+                <input type="radio" name="model" value={m.id} checked={i === 0} class="sr-only" />{m.name}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div data-for="percentage">
+          <label class="font-semibold">Driver’s share (% of revenue)<input class={input} name="pct" type="number" inputmode="decimal" min="0" max="100" value={d.pct} /></label>
+        </div>
+        <div data-for="slab" hidden class="grid gap-5 sm:grid-cols-3">
+          <label class="font-semibold">Slab (₹ per day)<input class={input} name="slab" type="number" inputmode="numeric" min="0" value={d.slab} /></label>
+          <label class="font-semibold">% below slab<input class={input} name="low" type="number" inputmode="decimal" min="0" max="100" value={d.low} /></label>
+          <label class="font-semibold">% at or above<input class={input} name="high" type="number" inputmode="decimal" min="0" max="100" value={d.high} /></label>
+        </div>
+        <div data-for="rent" hidden>
+          <label class="font-semibold">Daily rent paid to you (₹)<input class={input} name="rent" type="number" inputmode="numeric" min="0" value={d.rent} /></label>
+        </div>
+        <div data-for="salary" hidden>
+          <label class="font-semibold">Monthly salary (₹)<input class={input} name="salary" type="number" inputmode="numeric" min="0" value={d.salary} /></label>
+          <p class="mt-2 text-[0.875rem] text-muted">Spread across 26 working days, the same as the app.</p>
+        </div>
+      </div>
+
+      <div class="rounded-2xl bg-surface p-6" aria-live="polite">
+        <p class="eyebrow">For one day</p>
+        <dl class="num mt-3">
+          <div class="flex items-baseline justify-between border-b border-line py-3"><dt>Driver gets</dt><dd id="o-driver" class="font-display text-[2.25rem] font-semibold leading-none text-orange-text">{inr(cost.percentage(d.rev))}</dd></div>
+          <div class="flex items-baseline justify-between py-3"><dt>You keep, before fuel and expenses</dt><dd id="o-owner" class="text-[1.5rem] font-bold">{inr(d.rev - cost.percentage(d.rev))}</dd></div>
+        </dl>
+        <p class="eyebrow mt-6">For the month, <span id="o-days">{d.days}</span> working days at this revenue</p>
+        <dl class="num mt-2 text-[0.9875rem]">
+          <div class="flex justify-between py-1.5"><dt class="text-muted">Driver</dt><dd id="o-mdriver">{inr(cost.percentage(d.rev) * d.days)}</dd></div>
+          <div class="flex justify-between py-1.5"><dt class="text-muted">You</dt><dd id="o-mowner">{inr((d.rev - cost.percentage(d.rev)) * d.days)}</dd></div>
+        </dl>
+        <p id="o-explain" class="mt-5 text-[0.875rem] text-muted">₹3,450 × 30% = ₹1,035</p>
+      </div>
+    </form>
+
+    <div class="mt-10 overflow-x-auto">
+      <h3 class="text-[1.25rem]">All four models on the same day</h3>
+      <table class="data-table mt-3 min-w-[34rem]">
+        <thead><tr><th scope="col">Pay model</th><th scope="col" class="n">Driver gets</th><th scope="col" class="n">You keep</th></tr></thead>
+        <tbody>
+          {models.map((m) => {
+            const c = cost[m.id](d.rev);
+            return <tr data-row={m.id}><th scope="row" class="font-semibold">{m.name}</th><td class="n num" data-c="driver">{inr(c)}</td><td class="n num" data-c="owner">{inr(d.rev - c)}</td></tr>;
+          })}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <article class="wrap mt-20 grid gap-14 lg:grid-cols-[1fr_18rem]">
+    <div class="prose">
+      <h2>How do the four pay models work?</h2>
+      <h3>Percentage of revenue</h3>
+      <p>The driver gets a fixed share of what the vehicle earned that day. At 30%, Ravi’s ₹3,450 Uber day pays him <strong>₹1,035</strong>. This is the most common arrangement for cabs on Uber and Ola because both sides share good days and slow ones.</p>
+      <h3>Slab</h3>
+      <p>You set a daily revenue slab and two rates. Below the slab, the lower rate applies to the whole day. At or above it, the higher rate applies to the whole day. With a ₹3,000 slab at 25% and 32%:</p>
+      <ul>
+        <li>₹2,800 day: ₹2,800 × 25% = <strong>₹700</strong></li>
+        <li>₹3,450 day: ₹3,450 × 32% = <strong>₹1,104</strong></li>
+      </ul>
+      <p>It gives a driver a clear reason to put in the extra trips that cross the slab.</p>
+      <h3>Daily rent</h3>
+      <p>The driver pays you a fixed amount each day and keeps whatever the vehicle earns above it. With ₹1,800 rent on a ₹3,450 day, you get ₹1,800 and the driver keeps <strong>₹1,650</strong>. Common for autos and for cabs where the driver handles bookings.</p>
+      <h3>Monthly salary</h3>
+      <p>A fixed salary, spread over 26 working days. ₹18,200 a month is <strong>₹700 a shift</strong>, whatever the revenue. Common for lorries, trucks, vans and buses, and for owners who want the earnings risk on their side.</p>
+      <h2>What Gaadi Tracker does with the rule</h2>
+      <p>Set one rule per driver in the Owner app. Each shift the driver records is costed with the rule in force when that shift started. If you change a rule, it applies from the next shift, and earlier shifts keep the old one, so past hisab doesn’t move. You can also back-date a rule to a chosen date.</p>
+      <p>Read more in <a href="/blog/driver-commission-uber-ola-cars">how to calculate driver commission for Uber and Ola cars</a>, or see how it works for <a href="/taxi-fleet-management-app">cabs</a>, <a href="/auto-rickshaw-owner-app">autos</a> and <a href="/truck-fleet-management-app">lorries</a>.</p>
+    </div>
+    <aside class="lg:pt-2">
+      <div class="rounded-2xl border border-line p-5 text-[0.9375rem] lg:sticky lg:top-6">
+        <p class="font-semibold">The formulas</p>
+        <dl class="mt-3 grid gap-3 text-muted">
+          <div><dt class="font-semibold text-ink">Percentage</dt><dd>revenue × %</dd></div>
+          <div><dt class="font-semibold text-ink">Slab</dt><dd>revenue × (revenue &lt; slab ? low % : high %)</dd></div>
+          <div><dt class="font-semibold text-ink">Daily rent</dt><dd>revenue − rent (not below ₹0)</dd></div>
+          <div><dt class="font-semibold text-ink">Salary</dt><dd>monthly salary ÷ 26</dd></div>
+        </dl>
+      </div>
+    </aside>
+  </article>
+
+  <section class="wrap mt-16 grid gap-8 md:grid-cols-[1fr_2fr] md:gap-16" aria-labelledby="faq-h">
+    <h2 id="faq-h" class="text-[2rem]">Questions</h2>
+    <Faq items={faqs} />
+  </section>
+
+  <Download campaign="calculator" title="Let the app do this on every shift." text={`Set the rule once per driver in ${site.apps.owner.name}. Every shift your driver records is costed automatically.`} />
+</Base>
+
+<style>
+  .model-opt:has(input:checked) { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .model-opt:has(input:focus-visible) { outline: 3px solid var(--orange); outline-offset: 2px; }
+</style>
+
+<script>
+  const form = document.getElementById('calc') as HTMLFormElement;
+  const $ = (id: string) => document.getElementById(id)!;
+  const fmt = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN');
+  const num = (name: string) => Math.max(0, Number((form.elements.namedItem(name) as HTMLInputElement).value) || 0);
+
+  function costs(rev: number) {
+    const pct = num('pct'), slab = num('slab'), low = num('low'), high = num('high'), rent = num('rent'), salary = num('salary');
+    return {
+      percentage: { c: (rev * pct) / 100, why: `${fmt(rev)} × ${pct}% = ${fmt((rev * pct) / 100)}` },
+      slab: {
+        c: (rev * (rev < slab ? low : high)) / 100,
+        why: `${fmt(rev)} is ${rev < slab ? 'below' : 'at or above'} the ${fmt(slab)} slab, so ${fmt(rev)} × ${rev < slab ? low : high}% = ${fmt((rev * (rev < slab ? low : high)) / 100)}`,
+      },
+      rent: { c: Math.max(0, rev - rent), why: `${fmt(rev)} − ${fmt(rent)} rent = ${fmt(Math.max(0, rev - rent))} for the driver` },
+      salary: { c: salary / 26, why: `${fmt(salary)} ÷ 26 working days = ${fmt(salary / 26)} a shift` },
+    } as Record<string, { c: number; why: string }>;
+  }
+
+  function update() {
+    const rev = num('rev');
+    const days = Math.min(31, Math.max(1, num('days') || 1));
+    const model = (form.elements.namedItem('model') as RadioNodeList).value;
+    form.querySelectorAll<HTMLElement>('[data-for]').forEach((el) => (el.hidden = el.dataset.for !== model));
+    const all = costs(rev);
+    const c = all[model].c;
+    $('o-driver').textContent = fmt(c);
+    $('o-owner').textContent = fmt(rev - c);
+    $('o-days').textContent = String(days);
+    $('o-mdriver').textContent = fmt(c * days);
+    $('o-mowner').textContent = fmt((rev - c) * days);
+    $('o-explain').textContent = all[model].why;
+    document.querySelectorAll<HTMLTableRowElement>('[data-row]').forEach((tr) => {
+      const k = all[tr.dataset.row!].c;
+      tr.querySelector('[data-c="driver"]')!.textContent = fmt(k);
+      tr.querySelector('[data-c="owner"]')!.textContent = fmt(rev - k);
+      tr.classList.toggle('bg-peach-soft', tr.dataset.row === model);
+    });
+  }
+  form.addEventListener('input', update);
+  form.addEventListener('change', update);
+  update();
+</script>

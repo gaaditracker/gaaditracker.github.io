@@ -1,0 +1,43 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Download from '../../components/Download.astro';
+import { article, breadcrumbs } from '../../data/schema';
+import { formatDate } from '../../data/site';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', (p) => !p.data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+const { post } = Astro.props;
+const { Content } = await render(post);
+const path = `/blog/${post.id}`;
+const trail = [{ name: 'Home', path: '/' }, { name: 'Guides', path: '/blog' }, { name: post.data.title, path }];
+const others = (await getCollection('blog', (p) => !p.data.draft && p.id !== post.id)).slice(0, 2);
+---
+<Base title={post.data.metaTitle} description={post.data.description} path={path} type="article"
+  schema={[breadcrumbs(trail), article({ title: post.data.title, description: post.data.description, path, published: post.data.published, updated: post.data.updated, image: `/og/blog--${post.id}.png` })]}>
+  <article>
+    <header class="wrap pt-2">
+      <Breadcrumbs trail={trail} />
+      <div class="max-w-3xl pb-10 pt-6">
+        <h1 class="text-[2.25rem] sm:text-[3rem]">{post.data.title}</h1>
+        <p class="lede mt-5">{post.data.summary}</p>
+        <p class="mt-5 text-[0.875rem] text-muted">
+          Last updated <time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time> · {post.data.readMinutes} min read · By the Gaadi Tracker team
+        </p>
+      </div>
+    </header>
+    <div class="wrap"><div class="prose"><Content /></div></div>
+  </article>
+
+  <aside class="wrap mt-20" aria-labelledby="more-h">
+    <h2 id="more-h" class="text-[1.5rem]">More guides</h2>
+    <ul class="mt-4 grid gap-x-10 sm:grid-cols-2">
+      {others.map((o) => <li class="border-b border-line"><a href={`/blog/${o.id}`} class="flex min-h-[56px] items-center justify-between gap-4 font-semibold no-underline hover:text-orange-text">{o.data.title}<span class="arr" aria-hidden="true">→</span></a></li>)}
+    </ul>
+  </aside>
+
+  <Download campaign={`blog_${post.id}`} />
+</Base>

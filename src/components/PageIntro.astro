@@ -1,0 +1,15 @@
+---
+import Breadcrumbs from './Breadcrumbs.astro';
+interface Props { eyebrow?: string; title: string; answer?: string; crumb: string; path: string; updated?: string }
+const { eyebrow, title, answer, crumb, path, updated } = Astro.props;
+---
+<div class="wrap pt-2">
+  <Breadcrumbs trail={[{ name: 'Home', path: '/' }, { name: crumb, path }]} />
+  <div class="max-w-3xl pb-10 pt-6 md:pb-14">
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h1 class="mt-4 text-[2.25rem] sm:text-[3rem]">{title}</h1>
+    {answer && <p class="lede mt-5">{answer}</p>}
+    {updated && <p class="mt-4 text-[0.875rem] text-muted">Last updated <time datetime={updated}>{new Date(updated).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</time></p>}
+    <slot />
+  </div>
+</div>

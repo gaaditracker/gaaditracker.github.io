@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Faq from '../components/Faq.astro';
+import Download from '../components/Download.astro';
+import { faqGroups, allFaqs } from '../data/faq';
+import { breadcrumbs, faqPage } from '../data/schema';
+const path = '/faq';
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z]+/g, '-');
+---
+<Base
+  title="FAQ: Fleet Management and Driver Hisab | Gaadi Tracker"
+  description="Answers on driver commission, offline use, odometer checks, road tax reminders, reports and how the Owner and Driver apps work together."
+  path={path}
+  schema={[breadcrumbs([{ name: 'Home', path: '/' }, { name: 'FAQ', path }]), faqPage(allFaqs)]}>
+  <PageIntro crumb="FAQ" path={path} eyebrow="FAQ" title="Questions owners ask about Gaadi Tracker"
+    answer="Short, complete answers about how the Owner and Driver apps work, how driver pay is calculated, and what happens offline. Can’t find yours? Write to us from the contact page." />
+
+  <div class="wrap grid gap-12 lg:grid-cols-[14rem_1fr]">
+    <nav aria-label="FAQ sections" class="hidden lg:block">
+      <ul class="sticky top-6 text-[0.9375rem]">
+        {faqGroups.map((g) => <li><a href={`#${slug(g.title)}`} class="flex min-h-[44px] items-center font-semibold text-muted no-underline hover:text-ink">{g.title}</a></li>)}
+      </ul>
+    </nav>
+    <div class="grid gap-14">
+      {faqGroups.map((g) => (
+        <section aria-labelledby={slug(g.title)}>
+          <h2 id={slug(g.title)} class="mb-4 text-[1.5rem] sm:text-[1.75rem]">{g.title}</h2>
+          <Faq items={g.items} />
+        </section>
+      ))}
+      <p class="text-muted">Still stuck? <a class="link" href="/contact">Contact us</a> or read the <a class="link" href="/blog">guides</a>.</p>
+    </div>
+  </div>
+
+  <Download campaign="faq" />
+</Base>
