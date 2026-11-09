@@ -7,15 +7,19 @@
 @import '@fontsource/google-sans/latin-400.css';
 @import '@fontsource/google-sans/latin-ext-400.css';
 @import '@fontsource/google-sans/devanagari-400.css';
+@import '@fontsource/google-sans/tamil-400.css';
 @import '@fontsource/google-sans/latin-500.css';
 @import '@fontsource/google-sans/latin-ext-500.css';
 @import '@fontsource/google-sans/devanagari-500.css';
+@import '@fontsource/google-sans/tamil-500.css';
 @import '@fontsource/google-sans/latin-600.css';
 @import '@fontsource/google-sans/latin-ext-600.css';
 @import '@fontsource/google-sans/devanagari-600.css';
+@import '@fontsource/google-sans/tamil-600.css';
 @import '@fontsource/google-sans/latin-700.css';
 @import '@fontsource/google-sans/latin-ext-700.css';
 @import '@fontsource/google-sans/devanagari-700.css';
+@import '@fontsource/google-sans/tamil-700.css';
 
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 

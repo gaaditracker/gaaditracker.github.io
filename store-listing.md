@@ -135,6 +135,9 @@ REMINDERS, NOT ROADBLOCKS
 WORKS WITHOUT NETWORK
 • Everything saves on your phone and syncs when the signal comes back. Highways, ghat roads, basement parking: your entries are safe.
 
+IN YOUR LANGUAGE
+• English, Tamil, Hindi, Tanglish or Hinglish. Pick the one you read best.
+
 PRIVATE TO YOU
 • You see only your own shifts, entries and balance.
 

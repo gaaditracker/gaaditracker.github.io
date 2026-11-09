@@ -30,6 +30,10 @@ export const faqGroups: { title: string; items: QA[] }[] = [
         a: 'Yes, and that is deliberate. You install Gaadi Tracker Owner on your phone. Each driver installs Gaadi Tracker Driver on theirs. You add your vehicles and drivers in the Owner app, create each driver’s login and assign a vehicle to each driver. Both apps share one account, so everything a driver enters shows up for you.',
       },
       {
+        q: 'Which languages does Gaadi Tracker support?',
+        a: 'English, Tamil, Hindi, Tanglish and Hinglish. Tanglish is Tamil written in English letters, and Hinglish is Hindi written in English letters, the way many drivers type on WhatsApp. Each driver picks the language they read best, so a driver who is not comfortable with English can still start a shift, add earnings and fuel, and check their balance without help.',
+      },
+      {
         q: 'Is there an iPhone version?',
         a: 'Not at the moment. Gaadi Tracker Owner and Gaadi Tracker Driver are Android apps, available on Google Play. Most drivers in Indian fleets use Android phones, so that is where we started. If you need iPhone support for the owner app, write to us from the contact page so we know there is demand.',
       },

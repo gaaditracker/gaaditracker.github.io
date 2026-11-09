@@ -100,6 +100,13 @@ export const home = {
       entries: ['CNG ₹1,100 · 12.8 kg', 'Uber ₹3,450', 'FASTag ₹285', 'Parking ₹60', 'Ola ₹1,240'],
       demoLabel: 'Offline demo',
     },
+    langs: {
+      eyebrow: 'Your driver’s language',
+      h2: 'Speaks your driver’s language.',
+      sub: 'English, Tamil, Hindi, Tanglish or Hinglish. Each driver picks the one they read best, so nobody needs help to log a shift.',
+      pick: 'Pick a language',
+      example: 'Example wording',
+    },
     trust: {
       h2: 'Built for trust.',
       items: [
@@ -215,6 +222,13 @@ export const home = {
       status: { synced: 'सब सिंक', waiting: 'नेटवर्क का इंतज़ार: {n}', back: 'नेटवर्क वापस। सिंक हो रहा…' },
       entries: ['CNG ₹1,100 · 12.8 kg', 'Uber ₹3,450', 'FASTag ₹285', 'पार्किंग ₹60', 'Ola ₹1,240'],
       demoLabel: 'ऑफ़लाइन डेमो',
+    },
+    langs: {
+      eyebrow: 'ड्राइवर की भाषा',
+      h2: 'ड्राइवर की अपनी भाषा में।',
+      sub: 'English, तमिल, हिन्दी, Tanglish या Hinglish। हर ड्राइवर वही भाषा चुने जो उसे सबसे आसान लगे। शिफ़्ट डालने के लिए किसी की मदद नहीं चाहिए।',
+      pick: 'भाषा चुनिए',
+      example: 'उदाहरण के शब्द',
     },
     trust: {
       h2: 'भरोसे के लिए बना।',

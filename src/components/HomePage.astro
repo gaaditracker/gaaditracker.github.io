@@ -27,6 +27,17 @@ const priceStrip = lang === 'hi'
   ? { h: ['2 गाड़ियों तक मुफ़्त', 'उसके बाद हर गाड़ी ₹49 महीना', 'ड्राइवर मुफ़्त'], link: 'कीमत देखें', unit: 'गाड़ियाँ', per: '/ महीना' }
   : { h: ['Free for 2 vehicles', '₹49 per vehicle after that', 'Drivers free'], link: 'See pricing', unit: 'vehicles', per: '/ month' };
 const priceRows = examples.filter((e) => [3, 8, 15].includes(e.n));
+// Languages the apps support. The sample lines are example wording, shown on both the English and Hindi homepages.
+const langSamples = [
+  { id: 'en', name: 'English', sub: '', code: 'en', title: 'Start shift', line: 'Enter today’s odometer reading.', btn: 'Start' },
+  { id: 'ta', name: 'தமிழ்', sub: 'Tamil', code: 'ta', title: 'ஷிஃப்ட் தொடங்கு', line: 'இன்றைய ஓடோமீட்டர் அளவை உள்ளிடுங்கள்.', btn: 'தொடங்கு' },
+  { id: 'hi', name: 'हिन्दी', sub: 'Hindi', code: 'hi', title: 'शिफ़्ट शुरू करें', line: 'आज की ओडोमीटर रीडिंग डालें।', btn: 'शुरू करें' },
+  { id: 'tg', name: 'Tanglish', sub: 'Tamil + English', code: 'ta-Latn', title: 'Shift start pannunga', line: 'Innaiku odometer reading podunga.', btn: 'Start pannunga' },
+  { id: 'hg', name: 'Hinglish', sub: 'Hindi + English', code: 'hi-Latn', title: 'Shift shuru karo', line: 'Aaj ki odometer reading daalo.', btn: 'Shuru karo' },
+];
+const langCss = langSamples
+  .map((l) => `.langs:has(#lg-${l.id}:checked) [data-lg="${l.id}"]{display:block}.langs:has(#lg-${l.id}:checked) label[for="lg-${l.id}"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}.langs:has(#lg-${l.id}:checked) label[for="lg-${l.id}"] small{color:inherit;opacity:.7}`)
+  .join('');
 const storyScreens = [DriverStartShift, DriverBalance, OwnerAlerts];
 const storyLabels = ['Real screenshot: Start shift', 'Real screenshot: Driver balance', 'Real screenshot: Owner alerts'];
 
@@ -236,6 +247,51 @@ const dayCss = c.day.rows
     <script type="application/json" id="off-data" set:html={JSON.stringify({ entries: c.offline.entries, states: c.offline.states, status: c.offline.status })} />
   </section>
 
+  <!-- ───────── Languages ───────── -->
+  <section class="langs bg-surface py-24 md:py-32" aria-labelledby="lang-h">
+    <style set:html={langCss}></style>
+    <div class="wrap grid items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+      <div>
+        <p class="eyebrow text-orange-text">{c.langs.eyebrow}</p>
+        <h2 id="lang-h" class="mt-3 text-[2.6rem] sm:text-[3.75rem]">{c.langs.h2}</h2>
+        <p class="mt-5 max-w-lg text-[1.1875rem] text-muted">{c.langs.sub}</p>
+        <fieldset class="mt-9">
+          <legend class="mb-3 text-[0.875rem] font-semibold text-muted">{c.langs.pick}</legend>
+          <div class="flex flex-wrap gap-2">
+            {langSamples.map((l, i) => (
+              <>
+                <input type="radio" name="lg" id={`lg-${l.id}`} checked={i === 0} class="sr-only" />
+                <label for={`lg-${l.id}`} lang={l.code} class="lg-chip">
+                  <span>{l.name}</span>{l.sub && <small>{l.sub}</small>}
+                </label>
+              </>
+            ))}
+          </div>
+        </fieldset>
+        <div class="lg-progress mt-5" aria-hidden="true"><span></span></div>
+      </div>
+
+      <div class="lg-stage" aria-live="polite">
+        <div class="lg-card">
+          <div class="flex items-center justify-between text-[0.8125rem] font-semibold text-[#6e6e73]">
+            <span class="num">TN 23 TK 4521</span>
+            <span class="lg-tag">{c.langs.example}</span>
+          </div>
+          {langSamples.map((l) => (
+            <div class="lg-panel hidden" data-lg={l.id} lang={l.code}>
+              <p class="mt-5 text-[1.875rem] font-semibold leading-tight tracking-tight sm:text-[2.125rem]">{l.title}</p>
+              <p class="mt-2 text-[1.0625rem] text-[#6e6e73]">{l.line}</p>
+              <div class="num mt-6 flex items-baseline justify-between rounded-2xl border-[1.5px] border-[#d2d2d7] px-4 py-3.5">
+                <span class="text-[1.625rem] font-semibold">48,210</span><span class="font-semibold text-[#6e6e73]">km</span>
+              </div>
+              <div class="mt-5 rounded-full bg-[#f76707] py-3.5 text-center text-[1.0625rem] font-bold text-white">{l.btn}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ───────── Trust ───────── -->
   <section class="wrap py-16" aria-labelledby="trust-h">
     <h2 id="trust-h" class="text-[2.6rem] sm:text-[3.75rem]">{c.trust.h2}</h2>
@@ -288,6 +344,23 @@ const dayCss = c.day.rows
 </Base>
 
 <style is:global>
+  /* Languages: chips switch the sample card (radio + :has, no JS needed). */
+  .lg-chip { display: inline-flex; flex-direction: column; justify-content: center; min-height: 52px; padding: 6px 18px; border-radius: 18px; border: 1.5px solid var(--line); background: var(--bg); cursor: pointer; font-weight: 600; font-size: 1.0625rem; line-height: 1.2; transition: background-color 0.25s, color 0.25s, border-color 0.25s, transform 0.2s; }
+  .lg-chip small { font-size: 0.75rem; font-weight: 500; color: var(--muted); }
+  .lg-chip:hover { transform: translateY(-2px); border-color: var(--ink); }
+  .langs input:focus-visible + .lg-chip { outline: 2px solid var(--orange); outline-offset: 2px; }
+  .lg-stage { position: relative; display: flex; justify-content: center; }
+  .lg-stage::before { content: ''; position: absolute; inset: 8% 6%; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--orange) 22%, transparent), transparent); filter: blur(30px); }
+  .lg-card { position: relative; width: 100%; max-width: 360px; padding: 24px; border-radius: 30px; background: #fbfbfd; color: #1d1d1f; box-shadow: 0 30px 60px -30px rgb(31 25 21 / 0.45), 0 0 0 1px rgb(0 0 0 / 0.04); }
+  .lg-tag { padding: 3px 10px; border-radius: 999px; background: #f2f2f5; font-weight: 600; font-size: 0.75rem; }
+  .lg-panel { animation: lg-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  @keyframes lg-in { from { opacity: 0; transform: translateY(10px); filter: blur(4px); } }
+  .lg-progress { height: 3px; max-width: 18rem; border-radius: 3px; background: var(--surface-2); overflow: hidden; opacity: 0; transition: opacity 0.3s; }
+  .lg-progress.on { opacity: 1; }
+  .lg-progress span { display: block; height: 100%; width: 0; background: var(--orange); }
+  .lg-progress.run span { animation: lg-bar 2.8s linear forwards; }
+  @keyframes lg-bar { to { width: 100%; } }
+
   /* Hero entrance: one soft rise, staggered. */
   .hero-in { animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: var(--d, 0s); }
   @keyframes rise { from { opacity: 0; transform: translateY(24px); } }
@@ -420,7 +493,7 @@ const dayCss = c.day.rows
   .trust-cell:hover::before { transform: scaleX(1); }
 
   @media (prefers-reduced-motion: reduce) {
-    .hero-in, .slot, .q, .phones { animation: none; }
+    .hero-in, .slot, .q, .phones, .lg-panel { animation: none; }
     .js .bubble { opacity: 1; transform: none; }
     .js .typing { display: none; }
   }
@@ -514,6 +587,23 @@ const dayCss = c.day.rows
     new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting ? play() : pause())), { threshold: 0.5 }).observe(day);
     day.querySelectorAll('label[for^="day-"]').forEach((l) => l.addEventListener('pointerdown', () => { stopped = true; pause(); bar.classList.remove('on'); }));
     radios.forEach((r) => r.addEventListener('keydown', () => { stopped = true; pause(); bar.classList.remove('on'); }));
+  }
+
+  // ── Languages: cycles while in view, until the visitor picks one.
+  const langs = document.querySelector<HTMLElement>('.langs');
+  const lbar = document.querySelector<HTMLElement>('.lg-progress');
+  if (langs && lbar && !reduce && 'IntersectionObserver' in window) {
+    const radios = [...langs.querySelectorAll<HTMLInputElement>('input[name="lg"]')];
+    let timer = 0;
+    let stopped = false;
+    const restart = () => { lbar.classList.remove('run'); void lbar.offsetWidth; lbar.classList.add('run'); };
+    const tick = () => { const i = radios.findIndex((r) => r.checked); radios[(i + 1) % radios.length].checked = true; restart(); };
+    const play = () => { if (stopped || timer) return; lbar.classList.add('on'); restart(); timer = window.setInterval(tick, 2800); };
+    const pause = () => { clearInterval(timer); timer = 0; lbar.classList.remove('run'); };
+    const stop = () => { stopped = true; pause(); lbar.classList.remove('on'); };
+    new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting ? play() : pause())), { threshold: 0.5 }).observe(langs);
+    langs.querySelectorAll('.lg-chip').forEach((l) => l.addEventListener('pointerdown', stop));
+    radios.forEach((r) => r.addEventListener('keydown', stop));
   }
 
   // ── Offline demo.

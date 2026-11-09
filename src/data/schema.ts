@@ -28,7 +28,7 @@ export const apps = () =>
         : 'Driver app of Gaadi Tracker. Start and end shifts with odometer readings, add earnings, fuel, FASTag and expenses, see your balance with the owner. Works offline.',
     downloadUrl: playStoreListing(k),
     installUrl: playStoreListing(k),
-    inLanguage: ['en-IN', 'hi-IN'],
+    inLanguage: ['en-IN', 'ta-IN', 'hi-IN'],
     countriesSupported: 'IN',
     publisher: { '@id': `${site.url}/#org` },
     // `offers` is added once pricing is final (see PLACEHOLDERS.md).

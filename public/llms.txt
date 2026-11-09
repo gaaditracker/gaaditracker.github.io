@@ -15,6 +15,7 @@
 - Reminders: service by km or date, whichever comes first; quarterly road tax for lorries, trucks, vans and buses with "Mark paid". Driver reminders never block a shift.
 - Reports: revenue, fuel, expenses, driver cost and profit by vehicle, driver, platform or date range; CSV and PDF export. Fuel average (km per litre or per kg) for heavy vehicles.
 - Works offline: entries save on the driver's phone and sync when the network returns.
+- Languages: English, Tamil, Hindi, Tanglish (Tamil in English letters) and Hinglish (Hindi in English letters). Each driver picks their own.
 - Drivers see only their own data; owners see the whole fleet.
 
 ## Pricing (in Indian rupees)
