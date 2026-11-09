@@ -28,8 +28,14 @@ const phone = site.contactPhone;
     <div class="max-w-3xl pb-10 pt-6 md:pb-12">
       <p class="eyebrow">Pricing</p>
       <h1 class="mt-4 text-[2.5rem] leading-[1.05] sm:text-[3.5rem]">Simple pricing. Pay only for your gaadis.</h1>
-      <p class="mt-5 text-[1.25rem] font-medium sm:text-[1.375rem]">First 2 vehicles free. ₹49 a month for each vehicle after that. Drivers are always free.</p>
-      <p class="mt-4 max-w-2xl text-muted">Gaadi Tracker costs ₹0 for up to 2 vehicles and ₹49 per vehicle per month after that, up to 50 vehicles. Fleets with 51 or more vehicles get custom pricing. Drivers are always free.</p>
+      <p class="mt-5 text-[1.375rem] font-semibold leading-snug sm:text-[1.625rem]">
+        First 2 vehicles <mark class="hl">free</mark>. Then <mark class="hl">₹49</mark> a month per vehicle. Drivers <mark class="hl">always free</mark>.
+      </p>
+      <ul class="tiers mt-7" aria-label="Price by fleet size">
+        <li><b class="num">₹0</b><span>1–2 vehicles</span></li>
+        <li class="is-fleet"><b class="num">₹49<small>/vehicle<i class="not-italic max-sm:hidden">/month</i></small></b><span>3–50 vehicles</span></li>
+        <li><b>Custom</b><span>51+ vehicles</span></li>
+      </ul>
     </div>
   </div>
 
@@ -264,6 +270,20 @@ const phone = site.contactPhone;
 </Base>
 
 <style is:global>
+  /* Intro: highlighter strokes that sweep in, and three price tiers */
+  .hl { background: linear-gradient(transparent 58%, color-mix(in srgb, var(--orange) 32%, transparent) 58%) no-repeat 0 0 / 100% 100%; color: inherit; padding: 0 0.08em; border-radius: 2px; animation: hl-sweep 0.9s cubic-bezier(0.3, 0.7, 0.2, 1) both; }
+  .hl:nth-of-type(2) { animation-delay: 0.25s; } .hl:nth-of-type(3) { animation-delay: 0.5s; }
+  @keyframes hl-sweep { from { background-size: 0% 100%; } }
+  .tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; max-width: 36rem; }
+  .tiers li { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 16px; background: var(--surface); }
+  @media (max-width: 639px) { .tiers li { padding: 10px 11px; } .tiers small { display: block; margin: 0; font-size: 0.75rem; } .tiers b { font-size: 1.25rem; } .tiers span { font-size: 0.8125rem; white-space: nowrap; } }
+  .tiers b { font-size: 1.375rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.15; }
+  .tiers small { margin-left: 3px; font-size: 0.8125rem; font-weight: 600; color: var(--muted); }
+  .tiers span { font-size: 0.875rem; font-weight: 500; color: var(--muted); }
+  .tiers .is-fleet { background: var(--deep); color: #f5f5f7; }
+  .tiers .is-fleet b { color: #ffb37a; }
+  .tiers .is-fleet small, .tiers .is-fleet span { color: var(--deep-muted); }
+  @media (prefers-reduced-motion: reduce) { .hl { animation: none; } }
   .ph-text { background: color-mix(in srgb, var(--orange) 14%, transparent); border-radius: 4px; padding: 0 4px; font-family: ui-monospace, monospace; font-size: 0.92em; }
 
   /* No JS: hide the live calculator, show the table. With JS: the other way round. */
