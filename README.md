@@ -93,12 +93,12 @@ The site's address is set in `src/data/site-url.mjs`:
 
 ```js
 export const SITE_ORIGIN = 'https://hangoutech.com';
-export const BASE_PATH = '/gaadi-tracker-website';   // the sub-folder GitHub Pages serves it from
+export const BASE_PATH = '/gaaditracker.github.io';   // the sub-folder GitHub Pages serves it from
 ```
 
 Every link, canonical URL, sitemap entry, share image, `robots.txt` and `llms.txt` follows these two lines. In `.astro` files, write internal links with the `url()` helper from `src/data/site.ts` (`href={url('/pricing')}`); in Markdown use relative links (`../pricing/`).
 
-Locally the dev server runs at http://localhost:4321/gaadi-tracker-website/.
+Locally the dev server runs at http://localhost:4321/gaaditracker.github.io/.
 
 ### Moving to your own domain (e.g. gaaditracker.in)
 
