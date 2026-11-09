@@ -11,8 +11,8 @@ export const pricing = {
   freeVehicles: 2,
   perMonth: 49,
   perYear: 490, // 10 months' price: 2 months free
-  fleetMax: 15, // 16+ is Enterprise
-  sliderMax: 30,
+  fleetMax: 50, // 51+ is Enterprise
+  sliderMax: 60,
   trialDays: 30,
 
   /** PLACEHOLDER: e.g. 'included in the price' or 'plus 18% GST'. Empty shows the marked placeholder. */
@@ -31,7 +31,7 @@ export const bill = (n: number, period: Period = 'month') =>
   paidVehicles(n) * (period === 'year' ? pricing.perYear : pricing.perMonth);
 
 /** Example rows used on the pricing page (no-JS table) and the homepage strip. */
-export const examples = [2, 3, 5, 8, 15].map((n) => ({ n, month: bill(n), year: bill(n, 'year') }));
+export const examples = [2, 3, 5, 8, 15, 50].map((n) => ({ n, month: bill(n), year: bill(n, 'year') }));
 
 export const plans = [
   {
@@ -54,7 +54,7 @@ export const plans = [
   {
     id: 'fleet',
     name: 'Fleet',
-    vehicles: '3–15 vehicles',
+    vehicles: '3–50 vehicles',
     price: inr(pricing.perMonth),
     unit: 'per vehicle / month',
     line: `First 2 vehicles always free. Or ${inr(pricing.perYear)} per vehicle a year.`,
@@ -72,7 +72,7 @@ export const plans = [
   {
     id: 'enterprise',
     name: 'Enterprise',
-    vehicles: '16+ vehicles',
+    vehicles: '51+ vehicles',
     price: 'Custom',
     unit: '',
     line: 'Talk to us for the best price.',
@@ -93,7 +93,7 @@ export const comparison: { group: string; rows: [string, boolean | string, boole
   {
     group: 'Price',
     rows: [
-      ['Vehicles', '1–2', '3–15', '16+'],
+      ['Vehicles', '1–2', '3–50', '51+'],
       ['Price per vehicle', '₹0', '₹49 / month or ₹490 / year', 'Custom'],
       ['Drivers and driver logins', 'Free, unlimited', 'Free, unlimited', 'Free, unlimited'],
     ],
@@ -141,15 +141,15 @@ export const pricingFaqs: { q: string; a: string }[] = [
   },
   {
     q: 'How is my monthly bill calculated?',
-    a: 'Take the number of Active and Inactive vehicles, subtract the 2 free ones, and multiply by ₹49. The bill never goes below ₹0. So 3 vehicles cost ₹49 a month, 5 cost ₹147, 8 cost ₹294 and 15 cost ₹637. Disabled vehicles, the ones you have sold or retired, are not counted. On yearly billing it is ₹490 per paid vehicle a year.',
+    a: 'Take the number of Active and Inactive vehicles, subtract the 2 free ones, and multiply by ₹49. The bill never goes below ₹0. So 3 vehicles cost ₹49 a month, 5 cost ₹147, 8 cost ₹294, 15 cost ₹637 and 50 cost ₹2,352. Disabled vehicles, the ones you have sold or retired, are not counted. On yearly billing it is ₹490 per paid vehicle a year.',
   },
   {
     q: 'What happens when I add my 3rd vehicle?',
-    a: 'Your fleet moves from the Free plan to the Fleet plan. You pay ₹49 a month for the third vehicle, or ₹490 a year, and the first 2 vehicles stay free. Nothing else changes: your vehicles, drivers, shifts and reports carry on exactly as before. Each vehicle you add after that adds ₹49 a month, up to 15 vehicles.',
+    a: 'Your fleet moves from the Free plan to the Fleet plan. You pay ₹49 a month for the third vehicle, or ₹490 a year, and the first 2 vehicles stay free. Nothing else changes: your vehicles, drivers, shifts and reports carry on exactly as before. Each vehicle you add after that adds ₹49 a month, up to 50 vehicles.',
   },
   {
-    q: 'What happens if I grow past 15 vehicles?',
-    a: 'You are never blocked. From the 16th vehicle you qualify for Enterprise pricing, a custom price per vehicle that we agree with you. While we agree it, you keep using every feature at ₹49 per vehicle a month. Enterprise also includes help importing vehicles and drivers, dedicated WhatsApp support, a training call for your drivers and a monthly report by email.',
+    q: 'What happens if I grow past 50 vehicles?',
+    a: 'You are never blocked. From the 51st vehicle you qualify for Enterprise pricing, a custom price per vehicle that we agree with you. While we agree it, you keep using every feature at ₹49 per vehicle a month. Enterprise also includes help importing vehicles and drivers, dedicated WhatsApp support, a training call for your drivers and a monthly report by email.',
   },
   {
     q: 'Do sold or retired vehicles count?',
@@ -173,6 +173,6 @@ export const pricingFaqs: { q: string; a: string }[] = [
   },
   {
     q: 'Is GST included?',
-    a: `Prices are ${gstText}. All prices on this page are in Indian rupees: ₹49 per paid vehicle a month, or ₹490 per paid vehicle a year, with the first 2 vehicles always free and drivers always free. Enterprise prices for 16 or more vehicles are agreed with you directly. If you need GST details on your bill, tell us when you contact us.`,
+    a: `Prices are ${gstText}. All prices on this page are in Indian rupees: ₹49 per paid vehicle a month, or ₹490 per paid vehicle a year, with the first 2 vehicles always free and drivers always free. Enterprise prices for 51 or more vehicles are agreed with you directly. If you need GST details on your bill, tell us when you contact us.`,
   },
 ];

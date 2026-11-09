@@ -107,7 +107,7 @@ export const pricingSchema = () => ({
       {
         '@type': 'Offer',
         name: 'Fleet',
-        description: 'For 3–15 vehicles. ₹49 per vehicle per month, or ₹490 per vehicle per year. The first 2 vehicles are always free. 30-day free trial, no card needed.',
+        description: 'For 3–50 vehicles. ₹49 per vehicle per month, or ₹490 per vehicle per year. The first 2 vehicles are always free. 30-day free trial, no card needed.',
         price: 49,
         priceCurrency: 'INR',
         url: abs('/pricing'),
@@ -119,7 +119,7 @@ export const pricingSchema = () => ({
       {
         '@type': 'Offer',
         name: 'Enterprise',
-        description: 'For 16 or more vehicles. Custom price per vehicle.',
+        description: 'For 51 or more vehicles. Custom price per vehicle.',
         priceCurrency: 'INR',
         url: abs('/pricing'),
       },

@@ -29,7 +29,7 @@ const phone = site.contactPhone;
       <p class="eyebrow">Pricing</p>
       <h1 class="mt-4 text-[2.5rem] leading-[1.05] sm:text-[3.5rem]">Simple pricing. Pay only for your gaadis.</h1>
       <p class="mt-5 text-[1.25rem] font-medium sm:text-[1.375rem]">First 2 vehicles free. ₹49 a month for each vehicle after that. Drivers are always free.</p>
-      <p class="mt-4 max-w-2xl text-muted">Gaadi Tracker costs ₹0 for up to 2 vehicles and ₹49 per vehicle per month after that, up to 15 vehicles. Fleets with 16 or more vehicles get custom pricing. Drivers are always free.</p>
+      <p class="mt-4 max-w-2xl text-muted">Gaadi Tracker costs ₹0 for up to 2 vehicles and ₹49 per vehicle per month after that, up to 50 vehicles. Fleets with 51 or more vehicles get custom pricing. Drivers are always free.</p>
     </div>
   </div>
 
@@ -58,7 +58,7 @@ const phone = site.contactPhone;
             </div>
           </div>
           <input id="pc-range" type="range" min="1" max={pricing.sliderMax} value={start} step="1" class="pc-range mt-5 w-full" aria-label="Number of vehicles" />
-          <div class="num mt-1 flex justify-between text-[0.8125rem] text-muted"><span>1</span><span>15</span><span>{pricing.sliderMax}</span></div>
+          <div class="num relative mt-1 h-5 text-[0.8125rem] text-muted"><span class="absolute left-0">1</span><span class="absolute -translate-x-1/2" style={`left:${((pricing.fleetMax - 1) / (pricing.sliderMax - 1)) * 100}%`}>{pricing.fleetMax}</span><span class="absolute right-0">{pricing.sliderMax}</span></div>
 
           <div class="mt-7">
             <div class="blocks" aria-hidden="true">
@@ -67,7 +67,7 @@ const phone = site.contactPhone;
             <div class="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[0.8125rem] text-muted">
               <span class="flex items-center gap-1.5"><i class="key free"></i>Free</span>
               <span class="flex items-center gap-1.5"><i class="key paid"></i>Paid</span>
-              <span class="flex items-center gap-1.5"><i class="key ent"></i>Enterprise range (16+)</span>
+              <span class="flex items-center gap-1.5"><i class="key ent"></i>Enterprise range (51+)</span>
             </div>
           </div>
         </div>
@@ -77,14 +77,14 @@ const phone = site.contactPhone;
             <p class="text-[0.9375rem] font-semibold text-muted">Your bill</p>
             <p class="mt-2 flex items-baseline gap-2">
               <span class="odo-amt" aria-hidden="true"><span class="cur">₹</span><span class="digits" id="pc-digits"></span></span>
-              <span class="text-[1.0625rem] font-semibold text-muted" id="pc-unit">/ year</span>
+              <span class="pc-unit" id="pc-unit">/ year</span>
             </p>
             <p class="mt-2 text-[1.0625rem] font-semibold" id="pc-sub"></p>
             <p class="num mt-3 text-[0.9375rem] text-muted" id="pc-work"></p>
             <p class="mt-5 inline-flex rounded-full bg-[color-mix(in_srgb,var(--orange)_10%,transparent)] px-3 py-1 text-[0.8125rem] font-semibold text-orange-text">Launch price · locked for early customers</p>
           </div>
           <div class="bill-ent">
-            <p class="text-[0.9375rem] font-semibold text-indigo-text">16 or more vehicles</p>
+            <p class="text-[0.9375rem] font-semibold text-indigo-text">51 or more vehicles</p>
             <p class="mt-2 text-[1.875rem] font-semibold leading-tight sm:text-[2.25rem]">You qualify for Enterprise pricing</p>
             <p class="mt-3 text-muted" id="pc-ent"></p>
             <a href="#enterprise" class="btn btn-primary mt-6" id="pc-talk">Talk to us <span class="arr" aria-hidden="true">→</span></a>
@@ -101,7 +101,7 @@ const phone = site.contactPhone;
             <thead><tr class="border-b border-line text-[0.875rem] text-muted"><th class="py-2 font-semibold">Vehicles</th><th class="py-2 font-semibold">Monthly</th><th class="py-2 font-semibold">Yearly</th></tr></thead>
             <tbody>
               {examples.map((e) => <tr class="border-b border-line"><td class="py-3 font-semibold">{e.n}</td><td class="py-3">{inr(e.month)}</td><td class="py-3">{inr(e.year)}</td></tr>)}
-              <tr><td class="py-3 font-semibold">16+</td><td class="py-3" colspan="2">Enterprise: <a class="link" href="#enterprise">talk to us</a></td></tr>
+              <tr><td class="py-3 font-semibold">51+</td><td class="py-3" colspan="2">Enterprise: <a class="link" href="#enterprise">talk to us</a></td></tr>
             </tbody>
           </table>
         </div>
@@ -211,7 +211,7 @@ const phone = site.contactPhone;
   <section id="enterprise" class="wrap scroll-mt-20 pt-24 md:pt-32" aria-labelledby="ent-h">
     <div class="grid gap-10 rounded-[2rem] border border-line p-6 sm:p-10 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
       <div>
-        <p class="eyebrow text-indigo-text">Enterprise · 16+ vehicles</p>
+        <p class="eyebrow text-indigo-text">Enterprise · 51+ vehicles</p>
         <h2 id="ent-h" class="mt-3 text-[2rem] sm:text-[2.5rem]">Running a bigger fleet? Let’s agree your price.</h2>
         <p class="mt-4 text-muted">Tell us about your fleet. We’ll call you back with a price per vehicle. Until then you keep using every feature at ₹49 per vehicle. You are never blocked.</p>
         <dl class="mt-8 grid gap-5">
@@ -291,13 +291,13 @@ const phone = site.contactPhone;
   .pc-range:active::-webkit-slider-thumb { transform: scale(1.12); }
   .pc-range:focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; border-radius: 8px; }
 
-  /* Vehicle blocks: row 1 is 1–15 (Free + Fleet), row 2 is 16–30 (Enterprise) */
-  .blocks { display: grid; grid-template-columns: repeat(15, 1fr); gap: 5px; }
+  /* Vehicle blocks, 10 per row: rows 1–5 are 1–50 (Free + Fleet), row 6 is 51–60 (Enterprise) */
+  .blocks { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; max-width: 22rem; }
   .blk { aspect-ratio: 1; border-radius: 5px; background: var(--surface-2); transition: background-color 0.3s, transform 0.35s cubic-bezier(0.3, 1.6, 0.4, 1); }
-  .blk:nth-child(n + 16) { background: color-mix(in srgb, var(--indigo) 9%, var(--surface-2)); }
+  .blk:nth-child(n + 51) { background: color-mix(in srgb, var(--indigo) 9%, var(--surface-2)); }
   .blk.on { background: var(--orange); transform: scale(1.06); }
   .blk.on.free { background: #22a559; }
-  .blk.on:nth-child(n + 16) { background: var(--indigo); }
+  .blk.on:nth-child(n + 51) { background: var(--indigo); }
   .key { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
   .key.free { background: #22a559; } .key.paid { background: var(--orange); } .key.ent { background: var(--indigo); }
 
@@ -308,6 +308,9 @@ const phone = site.contactPhone;
   @keyframes pc-fade { from { opacity: 0; transform: translateY(8px); } }
   .odo-amt { display: inline-flex; align-items: flex-start; font-size: clamp(3.25rem, 9vw, 4.75rem); font-weight: 650; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
   .odo-amt .cur { margin-right: 0.04em; }
+  .pc-unit { align-self: center; display: inline-flex; align-items: center; padding: 6px 14px; border-radius: 999px; background: var(--orange); color: #fff; font-size: 1.0625rem; font-weight: 700; white-space: nowrap; box-shadow: 0 6px 16px -8px rgb(247 103 7 / 0.8); }
+  .pc-unit.bump { animation: pc-pop 0.45s cubic-bezier(0.3, 1.6, 0.4, 1); }
+  @keyframes pc-pop { 0% { transform: scale(0.8); opacity: 0.4; } 100% { transform: none; opacity: 1; } }
   .digits { display: inline-flex; }
   .dg { position: relative; display: inline-block; height: 1em; overflow: hidden; width: 0.6em; text-align: center; transition: width 0.4s, opacity 0.4s; }
   .dg .st { display: flex; flex-direction: column; transform: translateY(calc(var(--d, 0) * -1em)); transition: transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -375,6 +378,7 @@ const phone = site.contactPhone;
 
   @media (prefers-reduced-motion: reduce) {
     .dg, .dg .st, .blk { transition: none; }
+    .pc-unit.bump { animation: none; }
   }
 </style>
 
@@ -463,7 +467,8 @@ const phone = site.contactPhone;
     }
     billEl.dataset.state = paid ? 'paid' : 'free';
     render(total);
-    unit.textContent = p === 'year' ? '/ year' : '/ month';
+    const u = p === 'year' ? '/ year' : '/ month';
+    if (unit.textContent !== u) { unit.textContent = u; unit.classList.remove('bump'); void unit.offsetWidth; unit.classList.add('bump'); }
     if (!paid) {
       sub.textContent = 'Free, forever.';
       work.textContent = `${plural(n)}, within the ${FREE} free.`;

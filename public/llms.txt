@@ -20,9 +20,9 @@
 ## Pricing (in Indian rupees)
 
 - Free: 1–2 vehicles, ₹0 forever. Unlimited drivers, shifts, earnings, fuel and expense entries, driver balance, offline use.
-- Fleet: 3–15 vehicles, ₹49 per vehicle per month (launch price), or ₹490 per vehicle per year (2 months free). The first 2 vehicles are always free. Adds the 4 driver pay rules, approvals, shift locking, service and road tax reminders, full reports with export, push notifications.
-- Enterprise: 16+ vehicles, custom price. Never blocked: keeps ₹49 per vehicle until the price is agreed.
-- Bill = (Active + Inactive vehicles − 2) × ₹49 a month, never below ₹0. Examples: 3 → ₹49, 5 → ₹147, 8 → ₹294, 15 → ₹637. Disabled (sold or retired) vehicles are free.
+- Fleet: 3–50 vehicles, ₹49 per vehicle per month (launch price), or ₹490 per vehicle per year (2 months free). The first 2 vehicles are always free. Adds the 4 driver pay rules, approvals, shift locking, service and road tax reminders, full reports with export, push notifications.
+- Enterprise: 51+ vehicles, custom price. Never blocked: keeps ₹49 per vehicle until the price is agreed.
+- Bill = (Active + Inactive vehicles − 2) × ₹49 a month, never below ₹0. Examples: 3 → ₹49, 5 → ₹147, 8 → ₹294, 15 → ₹637, 50 → ₹2,352. Disabled (sold or retired) vehicles are free.
 - Drivers are always free. 30-day free trial of all Fleet features for every new fleet, no card needed.
 
 ## Pages
