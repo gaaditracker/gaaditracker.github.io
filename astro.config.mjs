@@ -3,10 +3,11 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
-import { SITE_URL } from './src/data/site-url.mjs';
+import { SITE_ORIGIN, BASE_PATH } from './src/data/site-url.mjs';
 
 export default defineConfig({
-  site: SITE_URL,
+  site: SITE_ORIGIN,
+  base: BASE_PATH || '/',
   trailingSlash: 'ignore',
   build: { format: 'directory' },
   integrations: [

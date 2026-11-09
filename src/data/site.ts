@@ -1,4 +1,7 @@
-import { SITE_URL } from './site-url.mjs';
+import { SITE_URL, BASE_PATH } from './site-url.mjs';
+
+/** Internal link or file path → the same path under the site's base folder. Leaves #anchors and full URLs alone. */
+export const url = (p: string) => (p.startsWith('/') && !p.startsWith('//') ? BASE_PATH + p : p);
 
 /**
  * Every value marked PLACEHOLDER is listed in PLACEHOLDERS.md.

@@ -4,7 +4,7 @@ import PageIntro from '../components/PageIntro.astro';
 import Faq from '../components/Faq.astro';
 import Download from '../components/Download.astro';
 import { breadcrumbs, faqPage } from '../data/schema';
-import { inr, site } from '../data/site';
+import { inr, site, url } from '../data/site';
 
 const path = '/driver-salary-commission-calculator';
 
@@ -144,7 +144,7 @@ const input = 'mt-1.5 block w-full min-h-[48px] rounded-xl border-[1.5px] border
       <p>A fixed salary, spread over 26 working days. ₹18,200 a month is <strong>₹700 a shift</strong>, whatever the revenue. Common for lorries, trucks, vans and buses, and for owners who want the earnings risk on their side.</p>
       <h2>What Gaadi Tracker does with the rule</h2>
       <p>Set one rule per driver in the Owner app. Each shift the driver records is costed with the rule in force when that shift started. If you change a rule, it applies from the next shift, and earlier shifts keep the old one, so past hisab doesn’t move. You can also back-date a rule to a chosen date.</p>
-      <p>Read more in <a href="/blog/driver-commission-uber-ola-cars">how to calculate driver commission for Uber and Ola cars</a>, or see how it works for <a href="/taxi-fleet-management-app">cabs</a>, <a href="/auto-rickshaw-owner-app">autos</a> and <a href="/truck-fleet-management-app">lorries</a>.</p>
+      <p>Read more in <a href={url('/blog/driver-commission-uber-ola-cars')}>how to calculate driver commission for Uber and Ola cars</a>, or see how it works for <a href={url('/taxi-fleet-management-app')}>cabs</a>, <a href={url('/auto-rickshaw-owner-app')}>autos</a> and <a href={url('/truck-fleet-management-app')}>lorries</a>.</p>
     </div>
     <aside class="lg:pt-2">
       <div class="rounded-2xl border border-line p-5 text-[0.9375rem] lg:sticky lg:top-6">

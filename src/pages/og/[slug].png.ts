@@ -2,6 +2,7 @@
  * Builds a 1200×630 share image for every English page at build time.
  * Uses the real logo PNG and the site's own fonts (Google Sans).
  */
+import { SITE_URL } from '../../data/site-url.mjs';
 import type { APIRoute, GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
 import fs from 'node:fs';
@@ -63,7 +64,7 @@ export const GET: APIRoute = async ({ props }) => {
     ]),
     h('div', { display: 'flex', alignItems: 'center', justifyContent: 'space-between' }, [
       h('div', { display: 'flex', width: 120, height: 8, borderRadius: 4, background: '#F76707' }),
-      h('div', { fontSize: 24, fontWeight: 500, color: '#6e6e73' }, 'gaaditracker.in'),
+      h('div', { fontSize: 24, fontWeight: 500, color: '#6e6e73' }, SITE_URL.replace(/^https?:\/\//, '')),
     ]),
   ]);
   const svg = await satori(tree as any, { width: 1200, height: 630, fonts });

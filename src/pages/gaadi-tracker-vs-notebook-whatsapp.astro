@@ -1,4 +1,5 @@
 ---
+import { url } from '../data/site';
 import Base from '../layouts/Base.astro';
 import PageIntro from '../components/PageIntro.astro';
 import MessyReality from '../components/MessyReality.astro';
@@ -45,7 +46,7 @@ const rows: [string, string, string][] = [
       <p class="mt-4 text-muted">If you own one vehicle and drive it yourself, a notebook is fine. You know the km, you filled the fuel, and there’s nobody to settle with.</p>
       <h2 class="mt-10 text-[1.75rem] sm:text-[2.25rem]">When it stops working</h2>
       <p class="mt-4 text-muted">The day someone else drives. Now the km, the fuel and the cash come to you second-hand, and the notebook only holds what you were told. That is where Gaadi Tracker starts.</p>
-      <p class="mt-6"><a class="link" href="/features">See every feature</a></p>
+      <p class="mt-6"><a class="link" href={url('/features')}>See every feature</a></p>
     </div>
     <MessyReality />
   </section>

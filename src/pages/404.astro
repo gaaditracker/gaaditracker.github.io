@@ -1,4 +1,5 @@
 ---
+import { url } from '../data/site';
 import Base from '../layouts/Base.astro';
 ---
 <Base title="Page not found | Gaadi Tracker" description="This page doesn’t exist." path="/404" noindex>
@@ -7,8 +8,8 @@ import Base from '../layouts/Base.astro';
     <h1 class="mt-4 max-w-xl text-[2.5rem] sm:text-[3.25rem]">Wrong turn. This page isn’t on the map.</h1>
     <p class="lede mt-5">The link may be old, or the address has a typo.</p>
     <ul class="mt-8 flex flex-wrap gap-3">
-      <li><a class="btn btn-primary" href="/">Go to the homepage</a></li>
-      <li><a class="btn btn-ghost" href="/faq">Read the FAQ</a></li>
+      <li><a class="btn btn-primary" href={url('/')}>Go to the homepage</a></li>
+      <li><a class="btn btn-ghost" href={url('/faq')}>Read the FAQ</a></li>
     </ul>
   </section>
 </Base>

@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import { breadcrumbs } from '../../data/schema';
-import { formatDate } from '../../data/site';
+import { formatDate, url } from '../../data/site';
 const posts = (await getCollection('blog', (p) => !p.data.draft)).sort((a, b) => +b.data.updated - +a.data.updated);
 const path = '/blog';
 ---
@@ -16,7 +16,7 @@ const path = '/blog';
     <ol class="stagger border-t border-line">
       {posts.map((p) => (
         <li class="border-b border-line">
-          <a href={`/blog/${p.id}`} class="group grid gap-2 py-8 no-underline md:grid-cols-[1fr_2fr] md:gap-12">
+          <a href={url(`/blog/${p.id}`)} class="group grid gap-2 py-8 no-underline md:grid-cols-[1fr_2fr] md:gap-12">
             <p class="text-[0.875rem] text-muted">Updated <time datetime={p.data.updated.toISOString()}>{formatDate(p.data.updated)}</time> · {p.data.readMinutes} min read</p>
             <div>
               <h2 class="text-[1.5rem] group-hover:text-orange-text sm:text-[1.75rem]">{p.data.title}</h2>

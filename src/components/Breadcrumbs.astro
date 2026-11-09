@@ -1,4 +1,5 @@
 ---
+import { url } from '../data/site';
 interface Props { trail: { name: string; path: string }[] }
 const { trail } = Astro.props;
 ---
@@ -7,7 +8,7 @@ const { trail } = Astro.props;
     {trail.map((t, i) => (
       <li class="flex items-center gap-2">
         {i > 0 && <span aria-hidden="true">/</span>}
-        {i < trail.length - 1 ? <a href={t.path} class="inline-flex min-h-[44px] items-center no-underline hover:underline">{t.name}</a> : <span aria-current="page">{t.name}</span>}
+        {i < trail.length - 1 ? <a href={url(t.path)} class="inline-flex min-h-[44px] items-center no-underline hover:underline">{t.name}</a> : <span aria-current="page">{t.name}</span>}
       </li>
     ))}
   </ol>

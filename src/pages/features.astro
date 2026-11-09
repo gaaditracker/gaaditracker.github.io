@@ -1,4 +1,5 @@
 ---
+import { url } from '../data/site';
 import Base from '../layouts/Base.astro';
 import PageIntro from '../components/PageIntro.astro';
 import Placeholder from '../components/Placeholder.astro';
@@ -93,7 +94,7 @@ const owner: JourneyGroup[] = [
     <h2 id="who-h" class="text-[1.75rem] sm:text-[2.25rem]">See it for your vehicles</h2>
     <ul class="mt-6 grid gap-x-10 sm:grid-cols-3">
       {[['/taxi-fleet-management-app', 'Taxi and cab fleets'], ['/auto-rickshaw-owner-app', 'Auto-rickshaw owners'], ['/truck-fleet-management-app', 'Lorry and truck owners']].map(([h, l]) => (
-        <li class="border-b border-line"><a href={h} class="flex min-h-[56px] items-center justify-between font-semibold no-underline hover:text-orange-text">{l}<span class="arr" aria-hidden="true">→</span></a></li>
+        <li class="border-b border-line"><a href={url(h)} class="flex min-h-[56px] items-center justify-between font-semibold no-underline hover:text-orange-text">{l}<span class="arr" aria-hidden="true">→</span></a></li>
       ))}
     </ul>
   </section>

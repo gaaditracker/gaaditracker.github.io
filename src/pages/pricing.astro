@@ -7,7 +7,7 @@ import Base from '../layouts/Base.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Faq from '../components/Faq.astro';
 import Download from '../components/Download.astro';
-import { site, inr } from '../data/site';
+import { site, inr, url } from '../data/site';
 import { pricing, plans, comparison, pricingFaqs, examples, gstText, whatsappText } from '../data/pricing';
 import { breadcrumbs, faqPage, pricingSchema } from '../data/schema';
 
@@ -126,7 +126,7 @@ const phone = site.contactPhone;
           </p>
           <p class="plan-line mt-3 text-[0.9375rem]">{p.line}</p>
           {p.id === 'fleet' && <p class="mt-3 text-[0.8125rem] font-semibold text-[#ffb37a]">Launch price · locked for early customers</p>}
-          <a href={p.cta.href} class:list={['btn mt-7 w-full', p.id === 'fleet' ? 'btn-primary' : 'btn-ghost']}>{p.cta.label}</a>
+          <a href={url(p.cta.href)} class:list={['btn mt-7 w-full', p.id === 'fleet' ? 'btn-primary' : 'btn-ghost']}>{p.cta.label}</a>
           <div class="mt-7 border-t pt-6 plan-rule">
             {p.lead && <p class="text-[0.9375rem] font-semibold">{p.lead}</p>}
             <ul class="mt-3 grid gap-2.5 text-[0.9375rem]">
@@ -202,7 +202,7 @@ const phone = site.contactPhone;
   <section class="wrap grid gap-8 md:grid-cols-[1fr_2fr] md:gap-16" aria-labelledby="pfaq-h">
     <div>
       <h2 id="pfaq-h" class="text-[2rem] sm:text-[2.75rem]">Pricing questions</h2>
-      <p class="mt-3 text-muted">More in the <a class="link" href="/faq">full FAQ</a>.</p>
+      <p class="mt-3 text-muted">More in the <a class="link" href={url('/faq')}>full FAQ</a>.</p>
     </div>
     <Faq items={pricingFaqs} />
   </section>
@@ -250,7 +250,7 @@ const phone = site.contactPhone;
         <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
         <div>
           <button type="submit" class="btn btn-primary w-full sm:w-auto">Get my price</button>
-          <p class="mt-3 text-[0.875rem] text-muted">We use your details only to call you back. See our <a class="link" href="/privacy-policy">privacy policy</a>.</p>
+          <p class="mt-3 text-[0.875rem] text-muted">We use your details only to call you back. See our <a class="link" href={url('/privacy-policy')}>privacy policy</a>.</p>
         </div>
         <div id="ent-status" role="status" aria-live="polite" class="hidden rounded-xl p-4"></div>
       </form>

@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Download from '../../components/Download.astro';
 import { article, breadcrumbs } from '../../data/schema';
-import { formatDate } from '../../data/site';
+import { formatDate, url } from '../../data/site';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', (p) => !p.data.draft);
@@ -35,7 +35,7 @@ const others = (await getCollection('blog', (p) => !p.data.draft && p.id !== pos
   <aside class="wrap mt-20" aria-labelledby="more-h">
     <h2 id="more-h" class="text-[1.5rem]">More guides</h2>
     <ul class="mt-4 grid gap-x-10 sm:grid-cols-2">
-      {others.map((o) => <li class="border-b border-line"><a href={`/blog/${o.id}`} class="flex min-h-[56px] items-center justify-between gap-4 font-semibold no-underline hover:text-orange-text">{o.data.title}<span class="arr" aria-hidden="true">→</span></a></li>)}
+      {others.map((o) => <li class="border-b border-line"><a href={url(`/blog/${o.id}`)} class="flex min-h-[56px] items-center justify-between gap-4 font-semibold no-underline hover:text-orange-text">{o.data.title}<span class="arr" aria-hidden="true">→</span></a></li>)}
     </ul>
   </aside>
 

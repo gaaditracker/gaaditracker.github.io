@@ -1,6 +1,6 @@
 import { site, playStoreListing } from './site';
 
-const abs = (path: string) => new URL(path, site.url).toString().replace(/\/$/, '') || site.url;
+const abs = (path: string) => site.url + (path === '/' ? '/' : path);
 
 export const organization = () => ({
   '@context': 'https://schema.org',

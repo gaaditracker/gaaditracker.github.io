@@ -1,4 +1,5 @@
 ---
+import { url } from '../data/site';
 import Base from '../layouts/Base.astro';
 import PageIntro from '../components/PageIntro.astro';
 import Faq from '../components/Faq.astro';
@@ -29,7 +30,7 @@ const slug = (s: string) => s.toLowerCase().replace(/[^a-z]+/g, '-');
           <Faq items={g.items} />
         </section>
       ))}
-      <p class="text-muted">Still stuck? <a class="link" href="/contact">Contact us</a> or read the <a class="link" href="/blog">guides</a>.</p>
+      <p class="text-muted">Still stuck? <a class="link" href={url('/contact')}>Contact us</a> or read the <a class="link" href={url('/blog')}>guides</a>.</p>
     </div>
   </div>
 

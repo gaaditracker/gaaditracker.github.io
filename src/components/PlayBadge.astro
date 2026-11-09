@@ -7,7 +7,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { playUrl, site, type AppKey } from '../data/site';
+import { playUrl, site, type AppKey, url } from '../data/site';
 import { ui, type Lang } from '../i18n/ui';
 
 interface Props { app: AppKey; campaign: string; lang?: Lang; label?: boolean }
@@ -23,7 +23,7 @@ const href = playUrl(app, campaign, lang);
   <a href={href} rel="noopener" class="inline-flex min-h-[48px] items-center no-underline transition-transform duration-300 hover:-translate-y-0.5"
      aria-label={`${site.apps[app].name}: ${t.badge.pre} ${t.badge.store}`}>
     {hasBadge ? (
-      <img src={`/${file}`} alt="" width="180" height="53" class="h-[53px] w-auto" />
+      <img src={url(`/${file}`)} alt="" width="180" height="53" class="h-[53px] w-auto" />
     ) : (
       <span class="inline-flex h-[53px] flex-col justify-center rounded-[10px] border border-[#a6a6a6] bg-black px-4 text-white leading-tight">
         <span class="text-[0.625rem] font-semibold tracking-wide">{t.badge.pre}</span>

@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageIntro from '../components/PageIntro.astro';
-import { site } from '../data/site';
+import { site, url } from '../data/site';
 import { breadcrumbs } from '../data/schema';
 const path = '/contact';
 const field = 'mt-1.5 block w-full min-h-[48px] rounded-xl border-[1.5px] border-line bg-bg px-3.5 py-2.5 text-[1rem] text-ink placeholder:text-muted/70 focus:border-orange focus:outline-none';
@@ -40,7 +40,7 @@ const field = 'mt-1.5 block w-full min-h-[48px] rounded-xl border-[1.5px] border
       <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
       <div>
         <button type="submit" class="btn btn-primary w-full sm:w-auto">Send message</button>
-        <p class="mt-3 text-[0.875rem] text-muted">We use your details only to reply. See our <a class="link" href="/privacy-policy">privacy policy</a>.</p>
+        <p class="mt-3 text-[0.875rem] text-muted">We use your details only to reply. See our <a class="link" href={url('/privacy-policy')}>privacy policy</a>.</p>
       </div>
       <div id="form-status" role="status" aria-live="polite" class="hidden rounded-xl p-4"></div>
     </form>
@@ -63,7 +63,7 @@ const field = 'mt-1.5 block w-full min-h-[48px] rounded-xl border-[1.5px] border
       )}
       <div>
         <h2 class="text-[1.25rem]">Before you write</h2>
-        <p class="mt-1 text-[0.9375rem] text-muted">Many setup questions are answered in the <a class="link" href="/faq">FAQ</a>.</p>
+        <p class="mt-1 text-[0.9375rem] text-muted">Many setup questions are answered in the <a class="link" href={url('/faq')}>FAQ</a>.</p>
       </div>
     </aside>
   </div>

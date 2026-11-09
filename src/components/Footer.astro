@@ -1,7 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import { ui, type Lang } from '../i18n/ui';
-import { site } from '../data/site';
+import { site, url } from '../data/site';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = ui[lang];
@@ -16,15 +16,15 @@ const year = new Date().getFullYear();
     </div>
     <nav aria-label={t.forWho}>
       <p class="eyebrow mb-2">{t.forWho}</p>
-      <ul class="text-[0.9375rem]">{t.vehicles.map((v) => <li><a href={v.href} class="inline-flex min-h-[44px] items-center no-underline hover:underline">{v.label}</a></li>)}</ul>
+      <ul class="text-[0.9375rem]">{t.vehicles.map((v) => <li><a href={url(v.href)} class="inline-flex min-h-[44px] items-center no-underline hover:underline">{v.label}</a></li>)}</ul>
     </nav>
     <nav aria-label={t.footerProduct}>
       <p class="eyebrow mb-2">{t.footerProduct}</p>
-      <ul class="text-[0.9375rem]">{t.nav.map((n) => <li><a href={n.href} class="inline-flex min-h-[44px] items-center no-underline hover:underline">{n.label}</a></li>)}</ul>
+      <ul class="text-[0.9375rem]">{t.nav.map((n) => <li><a href={url(n.href)} class="inline-flex min-h-[44px] items-center no-underline hover:underline">{n.label}</a></li>)}</ul>
     </nav>
     <nav aria-label={t.footerCompany}>
       <p class="eyebrow mb-2">{t.footerCompany}</p>
-      <ul class="text-[0.9375rem]">{t.footerMore.map((n) => <li><a href={n.href} class="inline-flex min-h-[44px] items-center no-underline hover:underline">{n.label}</a></li>)}</ul>
+      <ul class="text-[0.9375rem]">{t.footerMore.map((n) => <li><a href={url(n.href)} class="inline-flex min-h-[44px] items-center no-underline hover:underline">{n.label}</a></li>)}</ul>
     </nav>
   </div>
   <div class="wrap flex flex-wrap justify-between gap-2 border-t border-line py-6 text-[0.875rem] text-muted">

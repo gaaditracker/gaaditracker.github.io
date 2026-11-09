@@ -1,4 +1,5 @@
 ---
+import { url } from '../data/site';
 import Base from '../layouts/Base.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
 import PlayBadges from './PlayBadges.astro';
@@ -104,7 +105,7 @@ const resultRows = c.example.rows;
           <p class="mt-3 text-muted">{hi
             ? 'जिन राज्यों में माल वाहन का टैक्स तिमाही में लगता है, वहां यह तिमाही की शुरुआत में पहले से भरा जाता है। छूट की अवधि अपने राज्य के परिवहन विभाग से पक्की करें।'
             : 'In states that charge goods vehicles quarterly, tax is paid in advance at the start of the quarter. Confirm the grace period with your state transport department.'}</p>
-          <p class="mt-4"><a class="link" href="/blog/road-tax-due-dates-commercial-vehicles-india">{hi ? 'पूरी गाइड पढ़ें (English)' : 'Read the full guide'}</a></p>
+          <p class="mt-4"><a class="link" href={url('/blog/road-tax-due-dates-commercial-vehicles-india')}>{hi ? 'पूरी गाइड पढ़ें (English)' : 'Read the full guide'}</a></p>
         </div>
         <table class="data-table">
           <thead><tr><th scope="col">{hi ? 'तिमाही' : 'Quarter'}</th><th scope="col">{hi ? 'शुरुआत, टैक्स बाकी' : 'Starts, tax due'}</th></tr></thead>
@@ -123,7 +124,7 @@ const resultRows = c.example.rows;
     <h2 id="rel-h" class="text-[1.5rem]">{c.related.h2}</h2>
     <ul class="stagger mt-4 grid gap-x-10 sm:grid-cols-2">
       {c.related.links.map(([href, label]) => (
-        <li class="border-b border-line"><a href={href} class="flex min-h-[52px] items-center justify-between gap-4 font-semibold no-underline hover:text-orange-text">{label}<span class="arr" aria-hidden="true">→</span></a></li>
+        <li class="border-b border-line"><a href={url(href)} class="flex min-h-[52px] items-center justify-between gap-4 font-semibold no-underline hover:text-orange-text">{label}<span class="arr" aria-hidden="true">→</span></a></li>
       ))}
     </ul>
   </section>

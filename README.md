@@ -5,7 +5,7 @@ Marketing site for Gaadi Tracker, the fleet management and driver hisab app for 
 - **Stack:** [Astro](https://astro.build) (static output), [Tailwind CSS](https://tailwindcss.com) v4, MDX for guides and legal pages.
 - **Font:** Google Sans (open source, OFL, from Google Fonts), self-hosted through Fontsource. One family covers headings, body, Hindi (Devanagari) and the ₹ sign.
 - **JavaScript sent to visitors:** only the theme toggle, menus, the pay calculator and the contact form. Everything else is plain HTML.
-- **Hosting:** any static host. Planned for GitHub Pages.
+- **Hosting:** GitHub Pages, deployed by GitHub Actions on every push to `main`.
 
 ## Run it locally
 
@@ -87,6 +87,22 @@ Download the official badges from <https://play.google.com/intl/en_us/badges/> a
 
 ## Deploy
 
-The build output in `dist/` is a plain static site. `public/.nojekyll` is included for GitHub Pages. Deployment setup (GitHub Actions workflow, custom domain `CNAME`) is added once the hosting details are confirmed. See `PLACEHOLDERS.md`.
+Every push to `main` builds the site and publishes it to GitHub Pages (`.github/workflows/deploy.yml`). In the repo, **Settings → Pages → Source** must be **GitHub Actions**. Don't use "Deploy from a branch": that runs Jekyll on the source files and fails.
 
-If the site is served from a sub-path (for example `username.github.io/gaadi-tracker`) instead of a custom domain, set `base` in `astro.config.mjs` and update internal links; with a custom domain nothing changes.
+The site's address is set in `src/data/site-url.mjs`:
+
+```js
+export const SITE_ORIGIN = 'https://hangoutech.com';
+export const BASE_PATH = '/gaadi-tracker-website';   // the sub-folder GitHub Pages serves it from
+```
+
+Every link, canonical URL, sitemap entry, share image, `robots.txt` and `llms.txt` follows these two lines. In `.astro` files, write internal links with the `url()` helper from `src/data/site.ts` (`href={url('/pricing')}`); in Markdown use relative links (`../pricing/`).
+
+Locally the dev server runs at http://localhost:4321/gaadi-tracker-website/.
+
+### Moving to your own domain (e.g. gaaditracker.in)
+
+1. In `src/data/site-url.mjs` set `SITE_ORIGIN = 'https://gaaditracker.in'` and `BASE_PATH = ''`.
+2. Add `public/CNAME` containing `gaaditracker.in`.
+3. At your domain registrar, point the domain at GitHub Pages (A records to 185.199.108.153, .109.153, .110.153, .111.153, or a CNAME for `www` to `hangoutech.github.io`).
+4. In the repo, **Settings → Pages → Custom domain**: enter the domain and tick **Enforce HTTPS** once it's available.

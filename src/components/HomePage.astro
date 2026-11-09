@@ -14,7 +14,7 @@ import { home } from '../i18n/home';
 import { homeFaqs, homeFaqsHi } from '../data/faq';
 import { apps, faqPage } from '../data/schema';
 import { examples } from '../data/pricing';
-import { inr } from '../data/site';
+import { inr, url } from '../data/site';
 import type { Lang } from '../i18n/ui';
 
 interface Props { lang: Lang }
@@ -151,7 +151,7 @@ const dayCss = c.day.rows
         <p class="eyebrow text-orange-text">{c.calc.eyebrow}</p>
         <h2 id="calc-h" class="mt-3 text-[2.6rem] sm:text-[3.75rem]">{c.calc.h2}</h2>
         <p class="mt-5 max-w-md text-[1.1875rem] text-muted">{c.calc.sub}</p>
-        <p class="mt-8"><a class="link" href="/driver-salary-commission-calculator">{c.calc.more} <span class="arr" aria-hidden="true">→</span></a></p>
+        <p class="mt-8"><a class="link" href={url('/driver-salary-commission-calculator')}>{c.calc.more} <span class="arr" aria-hidden="true">→</span></a></p>
       </div>
       <form id="mini-calc" class="rounded-[2rem] border border-line p-6 sm:p-9" onsubmit="return false">
         <div class="seg" role="radiogroup" aria-label="Pay model">
@@ -316,10 +316,12 @@ const dayCss = c.day.rows
   <section class="wrap pt-8" aria-labelledby="price-h">
     <div class="price-strip grid items-center gap-8 rounded-[2rem] bg-[var(--deep)] p-7 text-[#f5f5f7] sm:p-10 md:grid-cols-[1.4fr_1fr] md:gap-12">
       <div>
-        <h2 id="price-h" class="text-[1.625rem] leading-tight sm:text-[2.25rem]">
-          {priceStrip.h.map((t, i) => <>{i > 0 && <span class="mx-2 text-[#ffb37a]" aria-hidden="true">·</span>}<span class="sm:whitespace-nowrap">{t}</span></>)}
+        <h2 id="price-h" class="grid gap-1.5 text-[1.625rem] leading-tight sm:text-[2.25rem]">
+          {priceStrip.h.map((t, i) => (
+            <span class:list={['flex items-start gap-3', i === 0 ? 'text-[#ffb37a]' : '']}><span class="mt-[0.48em] h-2 w-2 shrink-0 rounded-full bg-[#f76707]" aria-hidden="true"></span>{t}</span>
+          ))}
         </h2>
-        <a href="/pricing" class="btn btn-primary mt-7">{priceStrip.link} <span class="arr" aria-hidden="true">→</span></a>
+        <a href={url('/pricing')} class="btn btn-primary mt-7">{priceStrip.link} <span class="arr" aria-hidden="true">→</span></a>
       </div>
       <dl class="stagger grid gap-2">
         {priceRows.map((r) => (
@@ -336,7 +338,7 @@ const dayCss = c.day.rows
   <section class="wrap grid gap-8 py-20 md:grid-cols-[1fr_2fr] md:gap-16" aria-labelledby="faq-h">
     <div>
       <h2 id="faq-h" class="text-[2.6rem] sm:text-[3rem]">{c.faqTitle}</h2>
-      <p class="mt-4"><a class="link" href="/faq">{c.faqMore} <span class="arr" aria-hidden="true">→</span></a></p>
+      <p class="mt-4"><a class="link" href={url('/faq')}>{c.faqMore} <span class="arr" aria-hidden="true">→</span></a></p>
     </div>
     <Faq items={faqs} />
   </section>
