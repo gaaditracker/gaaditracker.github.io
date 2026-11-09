@@ -53,6 +53,7 @@ const dayCss = c.day.rows
   <!-- ───────── Hero: dark, full bleed, Owner/Driver switch ───────── -->
   <section class="hero on-dark relative overflow-hidden bg-[var(--deep)] text-[#f5f5f7]">
     <div class="hero-glow" aria-hidden="true"></div>
+    <div class="hero-grid" aria-hidden="true"></div>
     <div class="wrap relative grid min-h-[100svh] items-center gap-14 pb-16 pt-28 lg:grid-cols-[1.15fr_1fr] lg:pt-24">
       <div>
         <p class="hero-in text-[0.9375rem] font-medium text-[var(--deep-muted)]" style="--d:0s">{c.hero.eyebrow}</p>
@@ -370,6 +371,23 @@ const dayCss = c.day.rows
       radial-gradient(60% 70% at 85% 95%, rgb(247 103 7 / 0.30), transparent 70%),
       radial-gradient(50% 60% at 0% 0%, rgb(79 70 229 / 0.22), transparent 70%);
   }
+  /* Faint graph-paper grid with a dot on every crossing. Fades out toward the edges and drifts very slowly. */
+  .hero-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    --cell: 44px;
+    background-image:
+      radial-gradient(circle at center, rgb(255 255 255 / 0.16) 1.2px, transparent 1.8px),
+      linear-gradient(to right, rgb(255 255 255 / 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+    background-size: var(--cell) var(--cell);
+    background-position: calc(var(--cell) / -2) calc(var(--cell) / -2), 0 0, 0 0;
+    -webkit-mask-image: radial-gradient(ellipse 75% 70% at 60% 45%, #000 20%, transparent 78%);
+    mask-image: radial-gradient(ellipse 75% 70% at 60% 45%, #000 20%, transparent 78%);
+    animation: grid-drift 40s linear infinite;
+  }
+  @keyframes grid-drift {
+    to { background-position: calc(var(--cell) / 2) calc(var(--cell) / 2), var(--cell) var(--cell), var(--cell) var(--cell); }
+  }
   .bob { display: inline-block; animation: bob 1.8s ease-in-out infinite; }
   @keyframes bob { 50% { transform: translateY(4px); } }
 
@@ -493,7 +511,7 @@ const dayCss = c.day.rows
   .trust-cell:hover::before { transform: scaleX(1); }
 
   @media (prefers-reduced-motion: reduce) {
-    .hero-in, .slot, .q, .phones, .lg-panel { animation: none; }
+    .hero-in, .slot, .q, .phones, .lg-panel, .hero-grid { animation: none; }
     .js .bubble { opacity: 1; transform: none; }
     .js .typing { display: none; }
   }
