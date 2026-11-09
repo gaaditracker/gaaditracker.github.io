@@ -16,7 +16,7 @@ const pages: Record<string, { kicker: string; title: string; figure?: string }> 
   'truck-fleet-management-app': { kicker: 'For lorry and truck owners', title: 'Tons × rate, diesel, fuel average and road tax reminders.', figure: '4.1 km/l' },
   'driver-salary-commission-calculator': { kicker: 'Driver pay calculator', title: 'Percentage, slab, daily rent or salary. See what each one costs you.', figure: '30% = ₹1,035' },
   features: { kicker: 'Features', title: 'Two apps. One for you, one for each driver.' },
-  pricing: { kicker: 'Pricing', title: 'Gaadi Tracker plans for fleet owners.' },
+  pricing: { kicker: 'Pricing', title: 'Free for 2 vehicles. ₹49 per vehicle after that. Drivers free.', figure: '₹49' },
   faq: { kicker: 'FAQ', title: 'Questions owners ask about Gaadi Tracker.' },
   blog: { kicker: 'Guides', title: 'Guides for fleet owners in India.' },
   'gaadi-tracker-vs-notebook-whatsapp': { kicker: 'Comparison', title: 'Gaadi Tracker vs a notebook and WhatsApp.' },
@@ -38,7 +38,8 @@ const fonts = [
   { name: 'GS', data: font('google-sans/files/google-sans-latin-500-normal.woff'), weight: 500 as const, style: 'normal' as const },
   { name: 'GS', data: font('google-sans/files/google-sans-latin-600-normal.woff'), weight: 600 as const, style: 'normal' as const },
   { name: 'GS', data: font('google-sans/files/google-sans-latin-ext-500-normal.woff'), weight: 500 as const, style: 'normal' as const },
-  { name: 'GS', data: font('google-sans/files/google-sans-devanagari-500-normal.woff'), weight: 500 as const, style: 'normal' as const },
+  { name: 'GSD', data: font('google-sans/files/google-sans-devanagari-500-normal.woff'), weight: 500 as const, style: 'normal' as const },
+  { name: 'GSD', data: font('google-sans/files/google-sans-devanagari-600-normal.woff'), weight: 600 as const, style: 'normal' as const },
 ];
 const logo = `data:image/png;base64,${fs.readFileSync(path.join(process.cwd(), 'public/logo.png')).toString('base64')}`;
 
@@ -46,7 +47,7 @@ const h = (type: string, style: Record<string, unknown>, children?: unknown) => 
 
 export const GET: APIRoute = async ({ props }) => {
   const { kicker, title, figure } = props as { kicker: string; title: string; figure?: string };
-  const tree = h('div', { width: '100%', height: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: '#ffffff', padding: '64px 72px', fontFamily: 'GS', color: '#1d1d1f', position: 'relative' }, [
+  const tree = h('div', { width: '100%', height: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: '#ffffff', padding: '64px 72px', fontFamily: 'GS, GSD', color: '#1d1d1f', position: 'relative' }, [
     h('div', { display: 'flex', alignItems: 'center', gap: 18 }, [
       { type: 'img', props: { src: logo, width: 64, height: 64, style: { borderRadius: 14 } } },
       h('div', { fontSize: 34, fontWeight: 600, letterSpacing: -0.5 }, 'Gaadi Tracker'),

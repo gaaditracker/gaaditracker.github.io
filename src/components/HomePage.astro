@@ -13,6 +13,8 @@ import OwnerAlerts from './screens/OwnerAlerts.astro';
 import { home } from '../i18n/home';
 import { homeFaqs, homeFaqsHi } from '../data/faq';
 import { apps, faqPage } from '../data/schema';
+import { examples } from '../data/pricing';
+import { inr } from '../data/site';
 import type { Lang } from '../i18n/ui';
 
 interface Props { lang: Lang }
@@ -21,6 +23,10 @@ const c = home[lang];
 const faqs = (lang === 'hi' ? homeFaqsHi : homeFaqs).slice(0, 5);
 const path = lang === 'hi' ? '/hi' : '/';
 const campaign = lang === 'hi' ? 'home_hi' : 'home';
+const priceStrip = lang === 'hi'
+  ? { h: ['2 गाड़ियों तक मुफ़्त', 'उसके बाद हर गाड़ी ₹49 महीना', 'ड्राइवर मुफ़्त'], link: 'कीमत देखें', unit: 'गाड़ियाँ', per: '/ महीना' }
+  : { h: ['Free for 2 vehicles', '₹49 per vehicle after that', 'Drivers free'], link: 'See pricing', unit: 'vehicles', per: '/ month' };
+const priceRows = examples.filter((e) => [3, 8, 15].includes(e.n));
 const storyScreens = [DriverStartShift, DriverBalance, OwnerAlerts];
 const storyLabels = ['Real screenshot: Start shift', 'Real screenshot: Driver balance', 'Real screenshot: Owner alerts'];
 
@@ -247,6 +253,26 @@ const dayCss = c.day.rows
         <figcaption class="mt-4 text-[0.9375rem] text-muted">Name · City · Vehicles</figcaption>
       </figure>
     </Placeholder>
+  </section>
+
+  <!-- ───────── Pricing strip ───────── -->
+  <section class="wrap pt-8" aria-labelledby="price-h">
+    <div class="price-strip grid items-center gap-8 rounded-[2rem] bg-[var(--deep)] p-7 text-[#f5f5f7] sm:p-10 md:grid-cols-[1.4fr_1fr] md:gap-12">
+      <div>
+        <h2 id="price-h" class="text-[1.625rem] leading-tight sm:text-[2.25rem]">
+          {priceStrip.h.map((t, i) => <>{i > 0 && <span class="mx-2 text-[#ffb37a]" aria-hidden="true">·</span>}<span class="sm:whitespace-nowrap">{t}</span></>)}
+        </h2>
+        <a href="/pricing" class="btn btn-primary mt-7">{priceStrip.link} <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+      <dl class="stagger grid gap-2">
+        {priceRows.map((r) => (
+          <div class="price-row flex items-baseline justify-between gap-4 rounded-2xl bg-white/[0.06] px-5 py-3.5">
+            <dt class="num font-semibold text-[var(--deep-muted)]">{r.n} {priceStrip.unit}</dt>
+            <dd class="num text-[1.375rem] font-semibold">{inr(r.month)} <span class="text-[0.875rem] font-medium text-[var(--deep-muted)]">{priceStrip.per}</span></dd>
+          </div>
+        ))}
+      </dl>
+    </div>
   </section>
 
   <!-- ───────── FAQ ───────── -->

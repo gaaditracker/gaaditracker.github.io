@@ -77,3 +77,52 @@ export const article = (a: {
 });
 
 export { abs };
+
+/** Pricing page: the product with its three plans as offers. */
+export const pricingSchema = () => ({
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: site.name,
+  operatingSystem: 'Android',
+  applicationCategory: 'BusinessApplication',
+  applicationSubCategory: 'Fleet management',
+  description: site.description,
+  url: abs('/pricing'),
+  publisher: { '@id': `${site.url}/#org` },
+  offers: {
+    '@type': 'AggregateOffer',
+    priceCurrency: 'INR',
+    lowPrice: 0,
+    highPrice: 49,
+    offerCount: 3,
+    offers: [
+      {
+        '@type': 'Offer',
+        name: 'Free',
+        description: 'Free for 1–2 vehicles, forever. Drivers are free.',
+        price: 0,
+        priceCurrency: 'INR',
+        url: abs('/pricing'),
+      },
+      {
+        '@type': 'Offer',
+        name: 'Fleet',
+        description: 'For 3–15 vehicles. ₹49 per vehicle per month, or ₹490 per vehicle per year. The first 2 vehicles are always free. 30-day free trial, no card needed.',
+        price: 49,
+        priceCurrency: 'INR',
+        url: abs('/pricing'),
+        priceSpecification: [
+          { '@type': 'UnitPriceSpecification', price: 49, priceCurrency: 'INR', unitText: 'vehicle per month', referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'MON' } },
+          { '@type': 'UnitPriceSpecification', price: 490, priceCurrency: 'INR', unitText: 'vehicle per year', referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'ANN' } },
+        ],
+      },
+      {
+        '@type': 'Offer',
+        name: 'Enterprise',
+        description: 'For 16 or more vehicles. Custom price per vehicle.',
+        priceCurrency: 'INR',
+        url: abs('/pricing'),
+      },
+    ],
+  },
+});

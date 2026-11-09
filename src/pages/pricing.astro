@@ -1,60 +1,531 @@
 ---
 /**
- * PRICING IS A PLACEHOLDER. Every price, plan name and limit below is marked
- * "TBD" on purpose. Fill them in from PLACEHOLDERS.md before launch, and add
- * `offers` to the MobileApplication schema in src/data/schema.ts.
+ * Pricing. Every number comes from src/data/pricing.ts.
+ * GST and payment methods are marked placeholders until set there.
  */
 import Base from '../layouts/Base.astro';
-import PageIntro from '../components/PageIntro.astro';
-import Placeholder from '../components/Placeholder.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Faq from '../components/Faq.astro';
 import Download from '../components/Download.astro';
-import { breadcrumbs } from '../data/schema';
+import { site, inr } from '../data/site';
+import { pricing, plans, comparison, pricingFaqs, examples, gstText, whatsappText } from '../data/pricing';
+import { breadcrumbs, faqPage, pricingSchema } from '../data/schema';
+
 const path = '/pricing';
-
-const plans = [
-  { name: 'Plan name TBD', for: 'For 1–3 vehicles', price: '₹ TBD', per: 'per month', featured: false },
-  { name: 'Plan name TBD', for: 'For 4–15 vehicles', price: '₹ TBD', per: 'per month', featured: true },
-  { name: 'Plan name TBD', for: 'For 16–50 vehicles', price: '₹ TBD', per: 'per month', featured: false },
-];
-const included = [
-  'Owner app and a Driver app login for each driver',
-  'Odometer checks on every shift',
-  'All four driver pay models',
-  'Approvals for driver edits and past trips',
-  'Service and road tax reminders',
-  'Reports with CSV and PDF export',
-  'Offline entry for drivers',
-];
+const start = 8; // the calculator opens on 8 vehicles
+const field = 'mt-1.5 block w-full min-h-[48px] rounded-xl border-[1.5px] border-line bg-bg px-3.5 py-2.5 text-[1rem] text-ink placeholder:text-muted/70 focus:border-orange focus:outline-none';
+const phone = site.contactPhone;
 ---
-<Base title="Pricing | Gaadi Tracker" description="Gaadi Tracker pricing for taxi, auto and truck fleet owners in India. Plans and monthly prices for the Owner and Driver apps." path={path}
-  schema={[breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Pricing', path }])]}>
-  <PageIntro crumb="Pricing" path={path} eyebrow="Pricing" title="Gaadi Tracker pricing"
-    answer="Prices are being finalised. This page will list each plan, what it costs per month and how many vehicles it covers. Until then, write to us from the contact page and we’ll tell you what applies to your fleet." />
+<Base
+  title="Pricing: Free for 2 Vehicles, ₹49/Vehicle | Gaadi Tracker"
+  description="Gaadi Tracker is free for 2 vehicles. Add more for ₹49 per vehicle a month. Drivers are free. 30-day trial, no card needed."
+  path={path}
+  schema={[breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Pricing', path }]), pricingSchema(), faqPage(pricingFaqs)]}>
 
-  <section class="wrap" aria-label="Plans">
-    <Placeholder label="Pricing not final: fill in from PLACEHOLDERS.md" class="rounded-2xl">
-      <div class="grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3">
-        {plans.map((p) => (
-          <div class:list={['flex flex-col gap-4 bg-bg p-6 sm:p-8', p.featured && 'bg-peach-soft']}>
-            <div>
-              <h2 class="!font-sans text-[1.125rem] !font-bold !tracking-normal">{p.name}</h2>
-              <p class="text-[0.9375rem] text-muted">{p.for}</p>
-            </div>
-            <p><span class="num font-display text-[2.5rem] font-semibold">{p.price}</span> <span class="text-muted">{p.per}</span></p>
-            <a href="#download" class="btn mt-auto" class:list={[p.featured ? 'btn-primary' : 'btn-ghost']}>Get the app</a>
-          </div>
-        ))}
+  <!-- 1. Header -->
+  <div class="wrap pt-2">
+    <Breadcrumbs trail={[{ name: 'Home', path: '/' }, { name: 'Pricing', path }]} />
+    <div class="max-w-3xl pb-10 pt-6 md:pb-12">
+      <p class="eyebrow">Pricing</p>
+      <h1 class="mt-4 text-[2.5rem] leading-[1.05] sm:text-[3.5rem]">Simple pricing. Pay only for your gaadis.</h1>
+      <p class="mt-5 text-[1.25rem] font-medium sm:text-[1.375rem]">First 2 vehicles free. ₹49 a month for each vehicle after that. Drivers are always free.</p>
+      <p class="mt-4 max-w-2xl text-muted">Gaadi Tracker costs ₹0 for up to 2 vehicles and ₹49 per vehicle per month after that, up to 15 vehicles. Fleets with 16 or more vehicles get custom pricing. Drivers are always free.</p>
+    </div>
+  </div>
+
+  <!-- 2. Bill calculator -->
+  <section class="wrap" aria-labelledby="calc-h">
+    <div class="pc rounded-[2rem] bg-surface p-5 sm:p-8 md:p-10">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <h2 id="calc-h" class="text-[1.5rem] sm:text-[1.875rem]">What will I pay?</h2>
+        <fieldset class="pc-live seg-period" aria-label="Billing period">
+          <input type="radio" name="period" id="per-month" value="month" class="sr-only" />
+          <label for="per-month">Monthly</label>
+          <input type="radio" name="period" id="per-year" value="year" class="sr-only" checked />
+          <label for="per-year">Yearly <span class="save">Save 2 months</span></label>
+        </fieldset>
       </div>
-    </Placeholder>
-    <p class="mt-6 max-w-2xl text-[0.9375rem] text-muted">Free trial length, annual discount and payment methods: to be confirmed.</p>
+
+      <!-- Live calculator (needs JS) -->
+      <div class="pc-live mt-8 grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:gap-12">
+        <div>
+          <div class="flex items-center justify-between gap-4">
+            <label for="pc-n" class="font-semibold">How many vehicles?</label>
+            <div class="flex items-center gap-1 rounded-full border-[1.5px] border-line bg-bg p-1">
+              <button type="button" class="stepper" data-step="-1" aria-label="One vehicle fewer">−</button>
+              <input id="pc-n" type="number" inputmode="numeric" min="1" max={pricing.sliderMax} value={start} class="num w-12 bg-transparent text-center text-[1.25rem] font-bold focus:outline-none" />
+              <button type="button" class="stepper" data-step="1" aria-label="One vehicle more">+</button>
+            </div>
+          </div>
+          <input id="pc-range" type="range" min="1" max={pricing.sliderMax} value={start} step="1" class="pc-range mt-5 w-full" aria-label="Number of vehicles" />
+          <div class="num mt-1 flex justify-between text-[0.8125rem] text-muted"><span>1</span><span>15</span><span>{pricing.sliderMax}</span></div>
+
+          <div class="mt-7">
+            <div class="blocks" aria-hidden="true">
+              {Array.from({ length: pricing.sliderMax }, (_, i) => <span class:list={['blk', i < pricing.freeVehicles && 'free']}></span>)}
+            </div>
+            <div class="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[0.8125rem] text-muted">
+              <span class="flex items-center gap-1.5"><i class="key free"></i>Free</span>
+              <span class="flex items-center gap-1.5"><i class="key paid"></i>Paid</span>
+              <span class="flex items-center gap-1.5"><i class="key ent"></i>Enterprise range (16+)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bill rounded-[1.5rem] bg-bg p-6 sm:p-8" data-state="paid">
+          <div class="bill-main">
+            <p class="text-[0.9375rem] font-semibold text-muted">Your bill</p>
+            <p class="mt-2 flex items-baseline gap-2">
+              <span class="odo-amt" aria-hidden="true"><span class="cur">₹</span><span class="digits" id="pc-digits"></span></span>
+              <span class="text-[1.0625rem] font-semibold text-muted" id="pc-unit">/ year</span>
+            </p>
+            <p class="mt-2 text-[1.0625rem] font-semibold" id="pc-sub"></p>
+            <p class="num mt-3 text-[0.9375rem] text-muted" id="pc-work"></p>
+            <p class="mt-5 inline-flex rounded-full bg-[color-mix(in_srgb,var(--orange)_10%,transparent)] px-3 py-1 text-[0.8125rem] font-semibold text-orange-text">Launch price · locked for early customers</p>
+          </div>
+          <div class="bill-ent">
+            <p class="text-[0.9375rem] font-semibold text-indigo-text">16 or more vehicles</p>
+            <p class="mt-2 text-[1.875rem] font-semibold leading-tight sm:text-[2.25rem]">You qualify for Enterprise pricing</p>
+            <p class="mt-3 text-muted" id="pc-ent"></p>
+            <a href="#enterprise" class="btn btn-primary mt-6" id="pc-talk">Talk to us <span class="arr" aria-hidden="true">→</span></a>
+          </div>
+          <p class="sr-only" aria-live="polite" id="pc-live"></p>
+        </div>
+      </div>
+
+      <!-- Without JavaScript: a fixed example table -->
+      <div class="pc-static mt-6">
+        <p class="text-muted">Bill = (vehicles − 2) × ₹49 a month, or × ₹490 a year. Never below ₹0.</p>
+        <div class="mt-4 overflow-x-auto">
+          <table class="num w-full min-w-[16rem] text-left">
+            <thead><tr class="border-b border-line text-[0.875rem] text-muted"><th class="py-2 font-semibold">Vehicles</th><th class="py-2 font-semibold">Monthly</th><th class="py-2 font-semibold">Yearly</th></tr></thead>
+            <tbody>
+              {examples.map((e) => <tr class="border-b border-line"><td class="py-3 font-semibold">{e.n}</td><td class="py-3">{inr(e.month)}</td><td class="py-3">{inr(e.year)}</td></tr>)}
+              <tr><td class="py-3 font-semibold">16+</td><td class="py-3" colspan="2">Enterprise: <a class="link" href="#enterprise">talk to us</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="mt-6 text-[0.875rem] text-muted">Prices in Indian rupees. GST: <span class="ph-text">{gstText}</span>. Only Active and Inactive vehicles count. Disabled (sold or retired) vehicles are free and stay in your reports.</p>
+    </div>
   </section>
 
-  <section class="wrap grid gap-8 py-16 md:grid-cols-[1fr_1.4fr] md:gap-16" aria-labelledby="inc-h">
-    <div><h2 id="inc-h" class="text-[1.75rem] sm:text-[2.25rem]">What the apps include</h2><p class="mt-3 text-[0.9375rem] text-muted">Which of these each plan includes will be confirmed with the prices.</p></div>
-    <ul class="grid gap-3 sm:grid-cols-2">
-      {included.map((i) => <li class="flex gap-3 border-b border-line pb-3"><span aria-hidden="true" class="text-orange-text">✓</span>{i}</li>)}
+  <!-- 3. Plans -->
+  <section class="wrap pt-20 md:pt-28" aria-labelledby="plans-h">
+    <h2 id="plans-h" class="max-w-2xl text-[2rem] sm:text-[2.75rem]">Three plans. You only move up when you add vehicles.</h2>
+    <div class="plans mt-12 grid gap-5 md:grid-cols-3 md:items-stretch md:gap-0">
+      {plans.map((p) => (
+        <article class:list={['plan', `plan-${p.id}`, p.id === 'fleet' && 'on-dark']} aria-labelledby={`plan-${p.id}-h`}>
+          {p.id === 'fleet' && <p class="pop">Most popular</p>}
+          <h3 id={`plan-${p.id}-h`} class="!font-sans text-[1.25rem] !font-bold !tracking-normal">{p.name}</h3>
+          <p class="plan-for mt-0.5 text-[0.9375rem]">{p.vehicles}</p>
+          <p class="mt-6 flex flex-wrap items-baseline gap-x-2">
+            <span class="num text-[2.75rem] font-semibold leading-none tracking-tight">{p.price}</span>
+            {p.unit && <span class="plan-for text-[0.9375rem] font-medium">{p.unit}</span>}
+          </p>
+          <p class="plan-line mt-3 text-[0.9375rem]">{p.line}</p>
+          {p.id === 'fleet' && <p class="mt-3 text-[0.8125rem] font-semibold text-[#ffb37a]">Launch price · locked for early customers</p>}
+          <a href={p.cta.href} class:list={['btn mt-7 w-full', p.id === 'fleet' ? 'btn-primary' : 'btn-ghost']}>{p.cta.label}</a>
+          <div class="mt-7 border-t pt-6 plan-rule">
+            {p.lead && <p class="text-[0.9375rem] font-semibold">{p.lead}</p>}
+            <ul class="mt-3 grid gap-2.5 text-[0.9375rem]">
+              {p.items.map((i) => (
+                <li class="flex gap-2.5"><svg class="plan-tick mt-1 shrink-0" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 7.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>{i}</li>
+              ))}
+            </ul>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <ul class="stagger mt-10 grid gap-x-8 gap-y-5 border-t border-line pt-8 sm:grid-cols-3">
+      <li><p class="font-semibold">{pricing.trialDays}-day free trial</p><p class="mt-1 text-[0.9375rem] text-muted">Every new fleet gets all Fleet features free for 30 days. No card needed.</p></li>
+      <li><p class="font-semibold">Drivers are always free</p><p class="mt-1 text-[0.9375rem] text-muted">No charge per driver or per login. A day and a night driver on one cab cost nothing extra.</p></li>
+      <li><p class="font-semibold">Sold a vehicle? It’s free</p><p class="mt-1 text-[0.9375rem] text-muted">Set it to Disabled. It leaves your bill and stays in your reports.</p></li>
     </ul>
   </section>
 
-  <Download campaign="pricing" />
+  <!-- 4. Is it worth ₹49? -->
+  <section class="mt-24 bg-surface py-20 md:mt-32 md:py-28" aria-labelledby="worth-h">
+    <div class="wrap">
+      <p class="eyebrow">An example, not a promise</p>
+      <h2 id="worth-h" class="mt-3 text-[2rem] sm:text-[2.75rem]">Is it worth ₹49?</h2>
+      <p class="mt-4 max-w-2xl text-[1.0625rem] text-muted">A cab earns ₹2,000–4,000 a day. If Gaadi Tracker stops just ₹100 a day of unrecorded km or padded fuel bills, that’s ₹3,000 a month saved. The app costs ₹49. That’s less than ₹2 a day.</p>
+      <ol class="worth stagger mt-12 grid gap-3 md:grid-cols-4 md:gap-0">
+        <li><span class="w-k">A cab earns</span><span class="w-v num">₹2,000–4,000</span><span class="w-k">a day</span></li>
+        <li><span class="w-k">Stop leaks of</span><span class="w-v num">₹100</span><span class="w-k">a day</span></li>
+        <li class="w-save"><span class="w-k">That’s saved</span><span class="w-v num">₹3,000</span><span class="w-k">a month</span></li>
+        <li class="w-cost"><span class="w-k">The app costs</span><span class="w-v num">₹49</span><span class="w-k">a month. Under ₹2 a day.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 5. Comparison -->
+  <section class="wrap py-20 md:py-28" aria-labelledby="cmp-h">
+    <h2 id="cmp-h" class="text-[2rem] sm:text-[2.75rem]">Compare plans</h2>
+    <div class="cmp-wrap mt-10 overflow-x-auto rounded-[1.25rem] border border-line" tabindex="0" role="region" aria-labelledby="cmp-h">
+      <table class="cmp w-full min-w-[40rem] text-left">
+        <thead>
+          <tr>
+            <th scope="col" class="sticky-col"><span class="sr-only">Feature</span></th>
+            <th scope="col">Free</th>
+            <th scope="col" class="is-fleet">Fleet</th>
+            <th scope="col">Enterprise</th>
+          </tr>
+        </thead>
+        {comparison.map((g) => (
+          <tbody>
+            <tr class="grp"><th scope="rowgroup" class="sticky-col">{g.group}</th><td colspan="3"></td></tr>
+            {g.rows.map(([label, ...cells]) => (
+              <tr>
+                <th scope="row" class="sticky-col">{label}</th>
+                {cells.map((c, i) => (
+                  <td class:list={[i === 1 && 'is-fleet']}>
+                    {typeof c === 'string'
+                      ? <span class="num">{c}</span>
+                      : c
+                        ? <><svg class="yes" width="18" height="18" viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 7.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only">Included</span></>
+                        : <><span class="no" aria-hidden="true">—</span><span class="sr-only">Not included</span></>}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        ))}
+      </table>
+    </div>
+    <p class="mt-3 text-[0.8125rem] text-muted md:hidden">Swipe the table sideways to see all plans.</p>
+  </section>
+
+  <!-- 6. FAQ -->
+  <section class="wrap grid gap-8 md:grid-cols-[1fr_2fr] md:gap-16" aria-labelledby="pfaq-h">
+    <div>
+      <h2 id="pfaq-h" class="text-[2rem] sm:text-[2.75rem]">Pricing questions</h2>
+      <p class="mt-3 text-muted">More in the <a class="link" href="/faq">full FAQ</a>.</p>
+    </div>
+    <Faq items={pricingFaqs} />
+  </section>
+
+  <!-- 7. Enterprise -->
+  <section id="enterprise" class="wrap scroll-mt-20 pt-24 md:pt-32" aria-labelledby="ent-h">
+    <div class="grid gap-10 rounded-[2rem] border border-line p-6 sm:p-10 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
+      <div>
+        <p class="eyebrow text-indigo-text">Enterprise · 16+ vehicles</p>
+        <h2 id="ent-h" class="mt-3 text-[2rem] sm:text-[2.5rem]">Running a bigger fleet? Let’s agree your price.</h2>
+        <p class="mt-4 text-muted">Tell us about your fleet. We’ll call you back with a price per vehicle. Until then you keep using every feature at ₹49 per vehicle. You are never blocked.</p>
+        <dl class="mt-8 grid gap-5">
+          <div>
+            <dt class="text-[0.875rem] font-semibold text-muted">Phone</dt>
+            <dd class="mt-1 flex items-center gap-3"><span class="num select-all text-[1.25rem] font-semibold">{phone}</span><button type="button" class="copy" data-copy={phone.replace(/\s/g, '')}>Copy</button></dd>
+          </div>
+          <div>
+            <dt class="text-[0.875rem] font-semibold text-muted">WhatsApp</dt>
+            <dd class="mt-1 flex items-center gap-3">
+              {site.contactWhatsApp
+                ? <><span class="num select-all text-[1.25rem] font-semibold">{whatsappText}</span><button type="button" class="copy" data-copy={whatsappText}>Copy</button></>
+                : <span class="ph-text text-[1.0625rem] font-semibold">{whatsappText}</span>}
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <form id="ent-form" action={site.formspreeEndpoint} method="POST" class="grid gap-5" novalidate>
+        <input type="hidden" name="_subject" value="Enterprise pricing enquiry" />
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div><label for="e-name" class="font-semibold">Your name</label><input id="e-name" name="name" autocomplete="name" required class={field} /></div>
+          <div><label for="e-phone" class="font-semibold">Phone</label><input id="e-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="98xxx xxxxx" class={field} /></div>
+        </div>
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div><label for="e-city" class="font-semibold">City</label><input id="e-city" name="city" autocomplete="address-level2" required class={field} /></div>
+          <div><label for="e-n" class="font-semibold">Number of vehicles</label><input id="e-n" name="vehicles" type="number" inputmode="numeric" min="1" required placeholder="e.g. 24" class={field} /></div>
+        </div>
+        <div>
+          <label for="e-type" class="font-semibold">Vehicle type</label>
+          <select id="e-type" name="vehicle_type" required class={field}>
+            <option value="">Choose one</option>
+            <option>Cab</option><option>Auto</option><option>Lorry / truck</option><option>Van / bus</option><option>Mixed</option>
+          </select>
+        </div>
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+        <div>
+          <button type="submit" class="btn btn-primary w-full sm:w-auto">Get my price</button>
+          <p class="mt-3 text-[0.875rem] text-muted">We use your details only to call you back. See our <a class="link" href="/privacy-policy">privacy policy</a>.</p>
+        </div>
+        <div id="ent-status" role="status" aria-live="polite" class="hidden rounded-xl p-4"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- 8. Final CTA -->
+  <Download campaign="pricing" title="Start free with 2 vehicles"
+    text="Install Gaadi Tracker Owner, add your vehicles and drivers, and give each driver Gaadi Tracker Driver. Your first 2 vehicles are free, and every Fleet feature is free for 30 days." />
 </Base>
+
+<style is:global>
+  .ph-text { background: color-mix(in srgb, var(--orange) 14%, transparent); border-radius: 4px; padding: 0 4px; font-family: ui-monospace, monospace; font-size: 0.92em; }
+
+  /* No JS: hide the live calculator, show the table. With JS: the other way round. */
+  html:not(.js) .pc-live { display: none !important; }
+  .js .pc-static { display: none; }
+
+  /* Monthly / Yearly switch */
+  .seg-period { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--surface-2); border: 0; margin: 0; }
+  .seg-period label { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: 999px; font-weight: 600; font-size: 0.9375rem; color: var(--muted); cursor: pointer; transition: background-color 0.25s, color 0.25s, box-shadow 0.25s; }
+  .seg-period input:checked + label { background: var(--bg); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 0.12); }
+  .seg-period input:focus-visible + label { outline: 2px solid var(--orange); outline-offset: 2px; }
+  .seg-period .save { font-size: 0.75rem; padding: 2px 8px; border-radius: 999px; background: #e7f6ec; color: #166534; }
+  :root[data-theme='dark'] .seg-period .save { background: #14532d; color: #bbf7d0; }
+
+  .stepper { width: 36px; height: 36px; border-radius: 999px; font-size: 1.25rem; font-weight: 600; line-height: 1; color: var(--ink); transition: background-color 0.2s; }
+  .stepper:hover { background: var(--surface-2); }
+  #pc-n::-webkit-inner-spin-button, #pc-n::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  #pc-n { -moz-appearance: textfield; appearance: textfield; }
+
+  /* Slider */
+  .pc-range { -webkit-appearance: none; appearance: none; height: 28px; background: transparent; cursor: pointer; --fill: 24%; }
+  .pc-range::-webkit-slider-runnable-track { height: 8px; border-radius: 999px; background: linear-gradient(to right, var(--orange) var(--fill), var(--surface-2) var(--fill)); }
+  .pc-range::-moz-range-track { height: 8px; border-radius: 999px; background: linear-gradient(to right, var(--orange) var(--fill), var(--surface-2) var(--fill)); }
+  .pc-range::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; margin-top: -10px; border-radius: 50%; background: #fff; border: 2px solid var(--orange); box-shadow: 0 2px 8px rgb(0 0 0 / 0.2); transition: transform 0.2s; }
+  .pc-range::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 2px solid var(--orange); box-shadow: 0 2px 8px rgb(0 0 0 / 0.2); }
+  .pc-range:active::-webkit-slider-thumb { transform: scale(1.12); }
+  .pc-range:focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; border-radius: 8px; }
+
+  /* Vehicle blocks: row 1 is 1–15 (Free + Fleet), row 2 is 16–30 (Enterprise) */
+  .blocks { display: grid; grid-template-columns: repeat(15, 1fr); gap: 5px; }
+  .blk { aspect-ratio: 1; border-radius: 5px; background: var(--surface-2); transition: background-color 0.3s, transform 0.35s cubic-bezier(0.3, 1.6, 0.4, 1); }
+  .blk:nth-child(n + 16) { background: color-mix(in srgb, var(--indigo) 9%, var(--surface-2)); }
+  .blk.on { background: var(--orange); transform: scale(1.06); }
+  .blk.on.free { background: #22a559; }
+  .blk.on:nth-child(n + 16) { background: var(--indigo); }
+  .key { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
+  .key.free { background: #22a559; } .key.paid { background: var(--orange); } .key.ent { background: var(--indigo); }
+
+  /* Bill with rolling digits */
+  .bill .bill-ent { display: none; }
+  .bill[data-state='ent'] .bill-main { display: none; }
+  .bill[data-state='ent'] .bill-ent { display: block; animation: pc-fade 0.4s ease both; }
+  @keyframes pc-fade { from { opacity: 0; transform: translateY(8px); } }
+  .odo-amt { display: inline-flex; align-items: flex-start; font-size: clamp(3.25rem, 9vw, 4.75rem); font-weight: 650; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .odo-amt .cur { margin-right: 0.04em; }
+  .digits { display: inline-flex; }
+  .dg { position: relative; display: inline-block; height: 1em; overflow: hidden; width: 0.6em; text-align: center; transition: width 0.4s, opacity 0.4s; }
+  .dg .st { display: flex; flex-direction: column; transform: translateY(calc(var(--d, 0) * -1em)); transition: transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .dg .st span { height: 1em; line-height: 1; }
+  .dg.sep { width: 0.28em; }
+  .dg.out { width: 0; opacity: 0; }
+
+  /* Plans: Fleet in the middle, deep navy, a little taller */
+  .plan { position: relative; display: flex; flex-direction: column; padding: 28px; border-radius: 1.75rem; background: var(--surface); }
+  .plan .btn { margin-top: auto; }
+  .plan > .btn { margin-top: 28px; }
+  .plan-for, .plan-line { color: var(--muted); }
+  .plan-rule { border-color: var(--line); }
+  .plan-tick { color: var(--orange-text); }
+  .plan-fleet { background: var(--deep); color: #f5f5f7; }
+  .plan-fleet .plan-for, .plan-fleet .plan-line { color: var(--deep-muted); }
+  .plan-fleet .plan-rule { border-color: rgb(255 255 255 / 0.12); }
+  .plan-fleet .plan-tick { color: #ffb37a; }
+  .plan-enterprise .plan-tick { color: var(--indigo-text); }
+  .pop { position: absolute; top: -13px; left: 28px; padding: 4px 12px; border-radius: 999px; background: var(--orange); color: #fff; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.02em; }
+  @media (min-width: 768px) {
+    .plan-free { border-radius: 1.75rem 0 0 1.75rem; }
+    .plan-enterprise { border-radius: 0 1.75rem 1.75rem 0; }
+    .plan-fleet { margin: -18px 0; padding: 46px 30px; z-index: 1; box-shadow: 0 30px 60px -30px rgb(11 24 48 / 0.6); }
+  }
+  @media (hover: hover) { .plan { transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); } .plan:hover { transform: translateY(-4px); } }
+
+  /* Worth it: a chain of numbers */
+  .worth li { display: flex; flex-direction: column; gap: 4px; padding: 22px 24px; background: var(--bg); border-radius: 1.25rem; }
+  .w-k { font-size: 0.9375rem; color: var(--muted); }
+  .w-v { white-space: nowrap; font-size: clamp(1.625rem, 3vw, 2.25rem); font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; }
+  .w-save .w-v { color: #15803d; }
+  .w-cost { background: var(--deep) !important; color: #f5f5f7; }
+  .w-cost .w-k { color: var(--deep-muted); }
+  .w-cost .w-v { color: #ffb37a; }
+  :root[data-theme='dark'] .w-save .w-v { color: #4ade80; }
+  @media (min-width: 768px) {
+    .worth li { border-radius: 0; position: relative; }
+    .worth li:first-child { border-radius: 1.25rem 0 0 1.25rem; }
+    .worth li:last-child { border-radius: 0 1.25rem 1.25rem 0; }
+    .worth li:not(:last-child)::after { content: '→'; position: absolute; right: -11px; top: 50%; z-index: 1; width: 22px; height: 22px; margin-top: -11px; display: grid; place-items: center; border-radius: 50%; background: var(--surface); color: var(--muted); font-size: 0.8125rem; }
+  }
+
+  /* Comparison table */
+  .cmp th, .cmp td { padding: 14px 18px; border-bottom: 1px solid var(--line); font-size: 0.9375rem; vertical-align: middle; }
+  .cmp thead th { font-size: 1rem; font-weight: 700; padding-top: 20px; padding-bottom: 16px; }
+  .cmp tbody tr:last-child th, .cmp tbody tr:last-child td { border-bottom: 0; }
+  .cmp tbody + tbody tr.grp > * { border-top: 1px solid var(--line); }
+  .cmp tr.grp td { border-bottom: 0; }
+  .cmp tr.grp th { padding-top: 22px; padding-bottom: 8px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); border-bottom: 0; }
+  .cmp th[scope='row'] { font-weight: 500; }
+  .cmp .sticky-col { position: sticky; left: 0; z-index: 1; background: var(--bg); width: 9.5rem; min-width: 9.5rem; box-shadow: 1px 0 0 var(--line); }
+  @media (max-width: 767px) { .cmp th, .cmp td { padding: 12px 12px; font-size: 0.875rem; } .cmp { min-width: 34rem; } }
+  @media (min-width: 768px) { .cmp .sticky-col { width: auto; min-width: 15rem; box-shadow: none; } }
+  .cmp .is-fleet { background: color-mix(in srgb, var(--orange) 6%, var(--bg)); }
+  .cmp thead .is-fleet { color: var(--orange-text); }
+  .cmp .yes { color: #16a34a; }
+  .cmp .no { color: var(--line); font-weight: 700; }
+  .cmp tbody tr:not(.grp):hover th, .cmp tbody tr:not(.grp):hover td { background: var(--surface); }
+  .cmp-wrap:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+
+  .copy { min-height: 32px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--line); font-size: 0.8125rem; font-weight: 600; transition: background-color 0.2s, border-color 0.2s, color 0.2s; }
+  .copy:hover { background: var(--surface); }
+  .copy.done { background: #e7f6ec; border-color: #86efac; color: #166534; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dg, .dg .st, .blk { transition: none; }
+  }
+</style>
+
+<script>
+  import { pricing } from '../data/pricing';
+  const { freeVehicles: FREE, perMonth: PM, perYear: PY, fleetMax: MAX_FLEET, sliderMax: MAX } = pricing;
+  const fmt = (n: number) => Math.round(n).toLocaleString('en-IN');
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+
+  const num = $<HTMLInputElement>('pc-n');
+  const range = $<HTMLInputElement>('pc-range');
+  const digits = $('pc-digits');
+  const unit = $('pc-unit');
+  const sub = $('pc-sub');
+  const work = $('pc-work');
+  const ent = $('pc-ent');
+  const live = $('pc-live');
+  const billEl = document.querySelector<HTMLElement>('.bill')!;
+  const blocks = [...document.querySelectorAll<HTMLElement>('.blk')];
+  const entN = document.getElementById('e-n') as HTMLInputElement | null;
+
+  // ── Rolling digits. Slots are matched from the right, so ₹294 → ₹2,940 keeps its wheels turning.
+  type Slot = { el: HTMLElement; kind: 'd' | 's' };
+  let slots: Slot[] = []; // index 0 = rightmost
+  const makeDigit = (): Slot => {
+    const el = document.createElement('span');
+    el.className = 'dg';
+    el.innerHTML = `<span class="st">${Array.from({ length: 10 }, (_, i) => `<span>${i}</span>`).join('')}</span>`;
+    return { el, kind: 'd' };
+  };
+  const makeSep = (): Slot => {
+    const el = document.createElement('span');
+    el.className = 'dg sep';
+    el.textContent = ',';
+    return { el, kind: 's' };
+  };
+  const render = (value: number) => {
+    const chars = fmt(value).split('').reverse();
+    const next: Slot[] = [];
+    chars.forEach((ch, i) => {
+      const kind = ch === ',' ? 's' : 'd';
+      let s = slots[i];
+      if (!s || s.kind !== kind) {
+        if (s) s.el.remove();
+        s = kind === 'd' ? makeDigit() : makeSep();
+        digits.prepend(s.el);
+        if (kind === 'd') {
+          s.el.style.setProperty('--d', '0');
+          s.el.classList.add('out');
+          requestAnimationFrame(() => s!.el.classList.remove('out'));
+        }
+      }
+      if (kind === 'd') {
+        const target = s.el;
+        requestAnimationFrame(() => target.style.setProperty('--d', ch));
+      }
+      next.push(s);
+    });
+    slots.slice(chars.length).forEach((s) => s.el.remove());
+    slots = next;
+    // Keep DOM order matching slot order (leftmost first).
+    [...next].reverse().forEach((s) => digits.appendChild(s.el));
+  };
+
+  const period = () => ((document.querySelector('input[name="period"]:checked') as HTMLInputElement)?.value ?? 'year') as 'month' | 'year';
+  const plural = (n: number) => `${n} vehicle${n === 1 ? '' : 's'}`;
+
+  const update = (raw: number) => {
+    const n = Math.min(MAX, Math.max(1, Math.round(raw) || 1));
+    if (+num.value !== n && document.activeElement !== num) num.value = String(n);
+    range.value = String(n);
+    range.style.setProperty('--fill', `${((n - 1) / (MAX - 1)) * 100}%`);
+    blocks.forEach((b, i) => b.classList.toggle('on', i < n));
+    if (entN) entN.value = n > MAX_FLEET ? String(n) : entN.value;
+
+    const p = period();
+    const paid = Math.max(0, n - FREE);
+    const rate = p === 'year' ? PY : PM;
+    const total = paid * rate;
+
+    if (n > MAX_FLEET) {
+      billEl.dataset.state = 'ent';
+      ent.textContent = `Until we agree your price, you keep every feature at ₹${PM} per vehicle: ₹${fmt(paid * PM)} a month for ${n} vehicles.`;
+      live.textContent = `${plural(n)}: you qualify for Enterprise pricing.`;
+      return;
+    }
+    billEl.dataset.state = paid ? 'paid' : 'free';
+    render(total);
+    unit.textContent = p === 'year' ? '/ year' : '/ month';
+    if (!paid) {
+      sub.textContent = 'Free, forever.';
+      work.textContent = `${plural(n)}, within the ${FREE} free.`;
+    } else if (p === 'year') {
+      sub.textContent = `That’s ${total % 12 ? 'about ' : ''}₹${fmt(total / 12)} a month. You save ₹${fmt(paid * (PM * 12 - PY))} a year.`;
+      work.textContent = `${n} vehicles − ${FREE} free = ${paid} × ₹${PY}`;
+    } else {
+      sub.textContent = `Pay yearly and save ₹${fmt(paid * (PM * 12 - PY))}.`;
+      work.textContent = `${n} vehicles − ${FREE} free = ${paid} × ₹${PM}`;
+    }
+    live.textContent = `${plural(n)}: ₹${fmt(total)} ${p === 'year' ? 'a year' : 'a month'}.`;
+  };
+
+  range.addEventListener('input', () => update(+range.value));
+  num.addEventListener('input', () => { if (num.value !== '') update(+num.value); });
+  num.addEventListener('blur', () => { update(+num.value); num.value = range.value; });
+  document.querySelectorAll<HTMLButtonElement>('.stepper').forEach((b) =>
+    b.addEventListener('click', () => update(+range.value + Number(b.dataset.step))));
+  document.querySelectorAll('input[name="period"]').forEach((r) => r.addEventListener('change', () => update(+range.value)));
+  update(+range.value);
+
+  // ── Copy phone / WhatsApp
+  document.querySelectorAll<HTMLButtonElement>('.copy').forEach((b) => {
+    b.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(b.dataset.copy || '');
+        b.textContent = 'Copied';
+        b.classList.add('done');
+        setTimeout(() => { b.textContent = 'Copy'; b.classList.remove('done'); }, 1800);
+      } catch {
+        b.textContent = 'Select and copy';
+      }
+    });
+  });
+
+  // ── Enterprise form
+  const form = document.getElementById('ent-form') as HTMLFormElement;
+  const status = document.getElementById('ent-status') as HTMLDivElement;
+  const show = (ok: boolean, msg: string) => {
+    status.className = `rounded-xl p-4 font-semibold ${ok ? 'bg-[#e7f6ec] text-[#14532d]' : 'bg-[#fde8e8] text-[#7f1d1d]'}`;
+    status.textContent = msg;
+  };
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) {
+      show(false, 'Please fill in your name, phone, city, number of vehicles and vehicle type.');
+      form.querySelector<HTMLElement>(':invalid')?.focus();
+      return;
+    }
+    const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error(String(res.status));
+      form.reset();
+      show(true, 'Thanks. We have your details and will call you back on the next working day with a price for your fleet.');
+    } catch {
+      show(false, 'That didn’t go through. Check your connection and try again, or call us on the number shown.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Get my price';
+    }
+  });
+</script>

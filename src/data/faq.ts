@@ -3,6 +3,8 @@
  * AI assistants can quote them without the surrounding page.
  * `home: true` puts a question on the homepage too.
  */
+import { pricingFaqs } from './pricing';
+
 export type QA = { q: string; a: string; home?: boolean };
 
 export const faqGroups: { title: string; items: QA[] }[] = [
@@ -108,6 +110,7 @@ export const faqGroups: { title: string; items: QA[] }[] = [
       },
     ],
   },
+  { title: 'Pricing', items: pricingFaqs },
 ];
 
 export const allFaqs = faqGroups.flatMap((g) => g.items);

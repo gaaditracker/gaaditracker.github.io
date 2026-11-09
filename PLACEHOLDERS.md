@@ -13,7 +13,12 @@ While `showPlaceholders: true` in `src/data/site.ts`, every slot below that appe
   - Report: cab and lorry with fuel average (vehicle pages, features)
 - [ ] **Photography.** One photo per vehicle page, suggested shots written in the slot: cab at an airport pickup bay, autos at a stand, a loaded lorry at a highway dhaba. Real Indian roads and vehicles, no stock “business people”.
 - [ ] **Testimonial.** Homepage, proof section. Real owner only: quote, name, city, number of vehicles. Remove the slot if you don’t have one yet.
-- [ ] **Pricing.** `src/pages/pricing.astro`: plan names, prices, vehicle limits, trial, annual discount, payment methods. Then add `offers` to the `MobileApplication` schema in `src/data/schema.ts`.
+- [ ] **Pricing.** Prices, plans, trial and yearly billing are set in `src/data/pricing.ts`. Still to fill in there:
+  - `gst`: whether GST is included or added (shown as `[GST: included / +18%]` until set).
+  - `payments`: payment methods (shown as `[UPI / card / payment link]` until set).
+  - WhatsApp number: `contactWhatsApp` in `src/data/site.ts` (shown as `[WhatsApp number]` on the pricing page until set).
+  - Confirm which features the Free plan really includes after the 30-day trial. The pricing page follows the brief (pay rules, approvals, shift locking, reminders, full reports and push notifications are Fleet only), but the homepage, Features and vehicle pages don't mention plans.
+  - Confirm the Enterprise extras are offered: help importing, dedicated WhatsApp support, driver training call, monthly report by email.
 - [ ] **Hindi review.** Ask a native Hindi speaker to read `src/i18n/home.ts`, `src/i18n/vehicles.ts`, `src/i18n/ui.ts` and the Hindi FAQ in `src/data/faq.ts`.
 - [ ] **Road tax guide.** Have someone confirm the grace period wording for the states you sell in, then update the `updated:` date in the guide.
 
