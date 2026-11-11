@@ -8,6 +8,7 @@ import { SITE_ORIGIN, BASE_PATH } from './src/data/site-url.mjs';
 export default defineConfig({
   site: SITE_ORIGIN,
   base: BASE_PATH || '/',
+  output: 'static',
   trailingSlash: 'ignore',
   build: { format: 'directory' },
   integrations: [
